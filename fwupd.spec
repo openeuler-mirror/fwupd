@@ -4,7 +4,7 @@
 %endif
 
 %ifarch x86_64 aarch64
-%bcond_with uefi
+%bcond_without uefi
 %endif
 
 Name:           fwupd
@@ -85,15 +85,6 @@ This package contains the development and installed test files for %{name}.
 %install
 %meson_install
 
-%if %{with uefi}
-%ifarch x86_64
-%pesign -s -i %{buildroot}%{_libexecdir}/%{name}/efi/%{name}x64.efi -o %{buildroot}%{_libexecdir}/%{name}/efi/%{name}x64.efi.signed
-%endif
-%ifarch aarch64
-%pesign -s -i %{buildroot}%{_libexecdir}/%{name}/efi/%{name}aa64.efi -o %{buildroot}%{_libexecdir}/%{name}/efi/%{name}aa64.efi.signed
-%endif
-%endif
-
 mkdir -pm 0700 %{buildroot}%{_localstatedir}/lib/%{name}/gnupg
 
 %find_lang %{name}
@@ -148,7 +139,6 @@ mkdir -pm 0700 %{buildroot}%{_localstatedir}/lib/%{name}/gnupg
 %if %{with uefi}
 %config(noreplace)%{_sysconfdir}/%{name}/uefi.conf
 %{_libexecdir}/%{name}/efi/*.efi
-%{_libexecdir}/%{name}/efi/*.efi.signed
 %{_libexecdir}/%{name}/fwupdate
 %{_datadir}/*/*/LC_IMAGES/%{name}*
 %endif
