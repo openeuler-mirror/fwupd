@@ -4,12 +4,12 @@
 %endif
 
 %ifarch x86_64 aarch64
-%bcond_without uefi
+%bcond_with uefi
 %endif
 
 Name:           fwupd
 Version:        1.2.9
-Release:        2
+Release:        3
 Summary:        Make updating firmware on Linux automatic, safe and reliable
 License:        LGPLv2+
 URL:            https://github.com/fwupd/fwupd/releases
@@ -174,6 +174,9 @@ mkdir -pm 0700 %{buildroot}%{_localstatedir}/lib/%{name}/gnupg
 %{_datadir}/man/man1/*
 
 %changelog
+* Fri Jun 5 2020 Senlin Xia <xiasenlin1@huawei.com> - 1.2.9-3
+- remove sign for fwupd efi
+
 * Mon Dec 9 2019 openEuler Buildteam <buildteam@openeuler.org> - 1.2.9-2
 - Solve build problem of x86
 
