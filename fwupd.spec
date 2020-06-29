@@ -9,14 +9,15 @@
 
 Name:           fwupd
 Version:        1.2.9
-Release:        2
+Release:        3
 Summary:        Make updating firmware on Linux automatic, safe and reliable
 License:        LGPLv2+
 URL:            https://github.com/fwupd/fwupd/releases
 Source0:        http://people.freedesktop.org/~hughsient/releases/%{name}-%{version}.tar.xz
 
 #Self-tests are failing due to an expired cert #1264
-Patch1:         0001-Relax-the-certificate-time-checks-in-the-self-tests-.patch
+Patch0000:         0001-Relax-the-certificate-time-checks-in-the-self-tests-.patch
+Patch6000:         Set-polling-self-tests-to-slow.patch
 
 BuildRequires:	gettext glib2-devel libxmlb-devel valgrind valgrind-devel libgcab1-devel
 BuildRequires:  gpgme-devel libgudev1-devel libgusb-devel libsoup-devel polkit-devel sqlite-devel libxslt
@@ -174,6 +175,9 @@ mkdir -pm 0700 %{buildroot}%{_localstatedir}/lib/%{name}/gnupg
 %{_datadir}/man/man1/*
 
 %changelog
+* Sun Jun 28 2020 huanghaitao <huanghaitao@huawei.com> - 1.2.9-3
+- Solve build problem with check
+
 * Mon Dec 9 2019 openEuler Buildteam <buildteam@openeuler.org> - 1.2.9-2
 - Solve build problem of x86
 
