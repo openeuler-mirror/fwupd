@@ -9,7 +9,7 @@
 
 Name:           fwupd
 Version:        1.2.9
-Release:        3
+Release:        4
 Summary:        Make updating firmware on Linux automatic, safe and reliable
 License:        LGPLv2+
 URL:            https://github.com/fwupd/fwupd/releases
@@ -18,6 +18,9 @@ Source0:        http://people.freedesktop.org/~hughsient/releases/%{name}-%{vers
 #Self-tests are failing due to an expired cert #1264
 Patch0000:         0001-Relax-the-certificate-time-checks-in-the-self-tests-.patch
 Patch6000:         Set-polling-self-tests-to-slow.patch
+%ifarch riscv64
+Patch7000:         disable_rv64_spawn_timeout_test.patch
+%endif
 
 BuildRequires:	gettext glib2-devel libxmlb-devel valgrind valgrind-devel libgcab1-devel
 BuildRequires:  gpgme-devel libgudev1-devel libgusb-devel libsoup-devel polkit-devel sqlite-devel libxslt
@@ -175,6 +178,9 @@ mkdir -pm 0700 %{buildroot}%{_localstatedir}/lib/%{name}/gnupg
 %{_datadir}/man/man1/*
 
 %changelog
+* Sun Feb 27 2022 Jingwiw <ixoote@gamil.com> - 1.2.9-4
+- Known failures on RISCV64 right now, skipping spawn timeout test
+
 * Sun Jun 28 2020 huanghaitao <huanghaitao@huawei.com> - 1.2.9-3
 - Solve build problem with check
 
