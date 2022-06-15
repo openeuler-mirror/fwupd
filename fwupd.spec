@@ -8,15 +8,14 @@
 %endif
 
 Name:           fwupd
-Version:        1.2.9
-Release:        3
+Version:        1.2.14
+Release:        1
 Summary:        Make updating firmware on Linux automatic, safe and reliable
 License:        LGPLv2+
 URL:            https://github.com/fwupd/fwupd/releases
-Source0:        http://people.freedesktop.org/~hughsient/releases/%{name}-%{version}.tar.xz
+Source0:        https://github.com/fwupd/fwupd/archive/refs/tags/%{version}.tar.gz
 
 #Self-tests are failing due to an expired cert #1264
-Patch0000:         0001-Relax-the-certificate-time-checks-in-the-self-tests-.patch
 Patch6000:         Set-polling-self-tests-to-slow.patch
 
 BuildRequires:	gettext glib2-devel libxmlb-devel valgrind valgrind-devel libgcab1-devel
@@ -175,6 +174,9 @@ mkdir -pm 0700 %{buildroot}%{_localstatedir}/lib/%{name}/gnupg
 %{_datadir}/man/man1/*
 
 %changelog
+* Wed Jun 15 2022 xigaoxinyan <xigaoxinyan@h-partners.com> - 1.2.14-1
+- Update to 1.2.14
+
 * Sun Jun 28 2020 huanghaitao <huanghaitao@huawei.com> - 1.2.9-3
 - Solve build problem with check
 
