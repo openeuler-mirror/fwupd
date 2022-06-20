@@ -3,13 +3,17 @@
 %bcond_without libsmbios
 %endif
 
+# although we ship a few tiny python files these are utilities that 99.99%
+# of users do not need -- use this to avoid dragging python onto NestOS
+%global __requires_exclude ^/usr/bin/python3
+
 %ifarch x86_64 aarch64
 %bcond_without uefi
 %endif
 
 Name:           fwupd
 Version:        1.5.8
-Release:        1
+Release:        2
 Summary:        Make updating firmware on Linux automatic, safe and reliable
 License:        LGPLv2+
 URL:            https://github.com/fwupd/fwupd/releases
@@ -39,8 +43,6 @@ Requires:      glib2 bubblewrap libsoup libgusb libxmlb shared-mime-info libjcat
 Requires(post):systemd
 Requires(preun):systemd
 Requires(postun):systemd
-
-Recommends:    python3
 
 %description
 %{name} aims to make updating firmware on Linux automatic, safe and reliable.
@@ -173,6 +175,9 @@ mkdir -pm 0700 %{buildroot}%{_localstatedir}/lib/%{name}/gnupg
 %{_datadir}/man/man1/*
 
 %changelog
+* Mon Jun 20 2022 fushanqing <fushanqing@kylinos.cn> - 1.5.8-2
+- Remove the python installation dependency of fwupd
+
 * Mon Jun 17 2022 lin zhang <lin.zhang@turbolinux.com.cn> - 1.5.8-1
 - Upgrade to 1.5.8
 
