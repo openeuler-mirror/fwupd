@@ -9,7 +9,7 @@
 
 Name:           fwupd
 Version:        1.5.8
-Release:        2
+Release:        3
 Summary:        Make updating firmware on Linux automatic, safe and reliable
 License:        LGPLv2+
 URL:            https://github.com/fwupd/fwupd/releases
@@ -64,6 +64,10 @@ This package contains the development and installed test files for %{name}.
 
 %build
 %meson -Dtests=true -Dgtkdoc=true -Dplugin_dummy=true \
+%ifarch riscv64
+       -Dplugin_uefi_capsule=false \
+       -Dplugin_uefi_pk=false \
+%endif
 %if %{with uefi}
        -Dplugin_nvme=true \
 %else
@@ -123,7 +127,9 @@ mkdir -pm 0700 %{buildroot}%{_localstatedir}/lib/%{name}/gnupg
 %config(noreplace)%{_sysconfdir}/pki/%{name}
 %config(noreplace)%{_sysconfdir}/%{name}/daemon.conf
 %config(noreplace)%{_sysconfdir}/%{name}/thunderbolt.conf
+%ifnarch riscv64
 %config(noreplace)%{_sysconfdir}/%{name}/uefi_capsule.conf
+%endif
 %config(noreplace)%{_sysconfdir}/%{name}/upower.conf
 %{_sysconfdir}/pki/fwupd-metadata
 %{_datadir}/dbus-1/system.d/*.%{name}.conf
@@ -176,6 +182,9 @@ mkdir -pm 0700 %{buildroot}%{_localstatedir}/lib/%{name}/gnupg
 %{_datadir}/man/man1/*
 
 %changelog
+* Mon Aug 15 2022 lvxiaoqian <xiaoqian@nj.iscas.ac.cn> - 1.5.8-3
+- disable uefi_capsule and uefi_pk for riscv64
+
 * Wed Jul 27 2022 wulei <wulei80@h-partners.com> - 1.5.8-2
 - Fix file conflicts between fwupd and dbxtool
 
