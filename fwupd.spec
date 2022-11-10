@@ -13,11 +13,13 @@
 
 Name:           fwupd
 Version:        1.5.8
-Release:        2
+Release:        3
 Summary:        Make updating firmware on Linux automatic, safe and reliable
 License:        LGPLv2+
 URL:            https://github.com/fwupd/fwupd/releases
 Source0:        http://people.freedesktop.org/~hughsient/releases/%{name}-%{version}.tar.xz
+#refer:         https://github.com/fwupd/fwupd/commit/e74d38bfd3097471fe60dbe843a68c16516a78da
+Patch0001:      0001-Fix-compiling-with-new-versions-of-efivar.patch
 
 BuildRequires:	gettext glib2-devel libxmlb-devel valgrind valgrind-devel libgcab1-devel
 BuildRequires:  gpgme-devel libgudev1-devel libgusb-devel libsoup-devel polkit-devel sqlite-devel libxslt
@@ -175,6 +177,9 @@ mkdir -pm 0700 %{buildroot}%{_localstatedir}/lib/%{name}/gnupg
 %{_datadir}/man/man1/*
 
 %changelog
+* Thu Nov 10 2022 caodongxia <caodongxia@h-partners.com> - 1.5.8-3
+- Fix compiling with new versions of efivar
+
 * Mon Jun 20 2022 fushanqing <fushanqing@kylinos.cn> - 1.5.8-2
 - Remove the python installation dependency of fwupd
 
