@@ -13,7 +13,7 @@
 
 Name:           fwupd
 Version:        1.5.8
-Release:        4
+Release:        5
 Summary:        Make updating firmware on Linux automatic, safe and reliable
 License:        LGPLv2+
 URL:            https://github.com/fwupd/fwupd/releases
@@ -42,6 +42,7 @@ BuildRequires: efivar-devel libsmbios-devel
 %endif
 
 Requires:      glib2 bubblewrap libsoup libgusb libxmlb shared-mime-info libjcat tpm2-tss
+Requires:      pesign
 Requires(post):systemd
 Requires(preun):systemd
 Requires(postun):systemd
@@ -178,6 +179,9 @@ mkdir -pm 0700 %{buildroot}%{_localstatedir}/lib/%{name}/gnupg
 %{_datadir}/man/man1/*
 
 %changelog
+* Thu Dec 01 2022 yaoxin <yaoxin30@h-partners.com> - 1.5.8-5
+- Resolve fwupd upgrade and downgrade error
+
 * Thu Dec 01 2022 Ge Wang <wangge20@h-partners.com> - 1.5.8-4
 - Fix fwupd-refresh service start failure
 
