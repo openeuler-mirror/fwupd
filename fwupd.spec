@@ -13,7 +13,7 @@
 
 Name:           fwupd
 Version:        1.5.8
-Release:        3
+Release:        4
 Summary:        Make updating firmware on Linux automatic, safe and reliable
 License:        LGPLv2+
 URL:            https://github.com/fwupd/fwupd/releases
@@ -62,6 +62,7 @@ This package contains the development and installed test files for %{name}.
 
 %prep
 %autosetup -n %{name}-%{version} -p1
+sed -i '/DynamicUser=yes/d' data/motd/fwupd-refresh.service.in
 
 %build
 %meson -Dtests=true -Dgtkdoc=true -Dplugin_dummy=true \
@@ -177,6 +178,9 @@ mkdir -pm 0700 %{buildroot}%{_localstatedir}/lib/%{name}/gnupg
 %{_datadir}/man/man1/*
 
 %changelog
+* Thu Dec 01 2022 Ge Wang <wangge20@h-partners.com> - 1.5.8-4
+- Fix fwupd-refresh service start failure
+
 * Thu Nov 10 2022 caodongxia <caodongxia@h-partners.com> - 1.5.8-3
 - Fix compiling with new versions of efivar
 
