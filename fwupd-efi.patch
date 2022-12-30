@@ -1,0 +1,3196 @@
+diff -urN fwupd-1.8.6-0/contrib/flatpak/flathub.json fwupd-1.8.6/contrib/flatpak/flathub.json
+--- fwupd-1.8.6-0/contrib/flatpak/flathub.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/flathub.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,3 @@
++{
++    "skip-appstream-check": true
++}
+diff -urN fwupd-1.8.6-0/contrib/flatpak/org.freedesktop.fwupd.json fwupd-1.8.6/contrib/flatpak/org.freedesktop.fwupd.json
+--- fwupd-1.8.6-0/contrib/flatpak/org.freedesktop.fwupd.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/org.freedesktop.fwupd.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,220 @@
++{
++  "app-id": "org.freedesktop.fwupd",
++  "runtime": "org.gnome.Platform",
++  "runtime-version": "3.30",
++  "branch": "stable",
++  "sdk": "org.gnome.Sdk",
++  "command": "/app/libexec/fwupd/fwupdtool",
++  "finish-args": [
++    "--device=all",
++    "--filesystem=/boot",
++    "--filesystem=/sys",
++    "--filesystem=xdg-download",
++    "--share=network",
++    "--system-talk-name=org.freedesktop.fwupd",
++    "--system-talk-name=org.freedesktop.UPower"
++  ],
++  "cleanup": [
++    "*.a",
++    "*.la",
++    "/include",
++    "/lib/girepository-1.0",
++    "/lib/pkgconfig",
++    "/share/bash-completion",
++    "/share/dbus-1/system-services",
++    "/share/gir-1.0",
++    "/share/gtk-doc",
++    "/share/info",
++    "/share/man",
++    "/share/pkgconfig"
++  ],
++  "modules": [
++    "shared-modules/udev/udev-175.json",
++    {
++      "name": "libusb",
++      "config-opts": [
++        "--disable-static"
++      ],
++      "sources": [
++        {
++          "type": "archive",
++          "url": "https://github.com/libusb/libusb/releases/download/v1.0.22/libusb-1.0.22.tar.bz2",
++          "sha256": "75aeb9d59a4fdb800d329a545c2e6799f732362193b465ea198f2aa275518157"
++        }
++      ]
++    },
++    {
++      "name": "gusb",
++      "buildsystem": "meson",
++      "config-opts": [
++        "-Ddocs=false",
++        "-Dvapi=false",
++        "-Dtests=false"
++      ],
++      "cleanup": [
++        "/bin/gusbcmd"
++      ],
++      "sources": [
++        {
++          "type": "archive",
++          "url": "https://people.freedesktop.org/~hughsient/releases/libgusb-0.3.0.tar.xz",
++          "sha256": "d8e7950f99b6ae4c3e9b8c65f3692b9635289e6cff8de40c4af41b2e9b348edc"
++        }
++      ]
++    },
++    {
++      "name": "efivar",
++      "buildsystem": "simple",
++      "build-commands": [
++        "make prefix=/app libdir=/app/lib",
++        "make install prefix=/app libdir=/app/lib"
++      ],
++      "cleanup": [
++          "/bin/efivar"
++      ],
++      "sources": [
++        {
++          "type": "archive",
++          "url": "https://github.com/rhboot/efivar/releases/download/35/efivar-35.tar.bz2",
++          "sha256": "1e033dc5d099a44fd473b0887dbcc4b105613efab0fb3c5df9f111ea5d147394"
++        }
++      ]
++    },
++    {
++      "name": "libsmbios_c",
++      "only-arches": [
++        "x86_64"
++      ],
++      "config-opts": [
++        "--disable-doxygen",
++        "--disable-graphviz",
++        "--disable-python"
++      ],
++      "cleanup": [
++        "/sbin/smbios*",
++        "/share/locale/*/LC_MESSAGES/libsmbios.mo"
++      ],
++      "sources": [
++        {
++          "type": "archive",
++          "url": "https://github.com/dell/libsmbios/archive/v2.4.2.tar.gz",
++          "sha256": "ebfe18415e24bbec06d0a9ea1066c8dcd82982555373712713d7e194138650de"
++        }
++      ]
++    },
++    {
++      "name": "gnu-efi",
++      "only-arches": [
++        "aarch64",
++        "x86_64"
++      ],
++      "buildsystem": "simple",
++      "build-commands": [
++        "make",
++        "make PREFIX=/app install"
++      ],
++      "no-autogen": true,
++      "cleanup": [
++        "/bin/efivar"
++      ],
++      "sources": [
++        {
++          "type": "archive",
++          "url": "http://superb-dca2.dl.sourceforge.net/project/gnu-efi/gnu-efi-3.0.9.tar.bz2",
++          "sha256": "6715ea7eae1c7e4fc5041034bd3f107ec2911962ed284a081e491646b12277f0"
++        }
++      ]
++    },
++    {
++      "name": "python3-olefile",
++      "only-arches": [
++        "aarch64",
++        "x86_64"
++      ],
++      "buildsystem": "simple",
++      "build-commands": [
++        "pip3 install --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} olefile"
++      ],
++      "sources": [
++        {
++          "type": "file",
++          "url": "https://pypi.python.org/packages/35/17/c15d41d5a8f8b98cc3df25eb00c5cee76193114c78e5674df6ef4ac92647/olefile-0.44.zip",
++          "sha256": "61f2ca0cd0aa77279eb943c07f607438edf374096b66332fae1ee64a6f0f73ad"
++        }
++      ]
++    },
++    {
++      "name": "python3-pillow",
++      "only-arches": [
++        "aarch64",
++        "x86_64"
++      ],
++      "buildsystem": "simple",
++      "build-commands": [
++        "pip3 install --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} Pillow"
++      ],
++      "cleanup": [
++        "/bin/*.py"
++      ],
++      "sources": [
++        {
++          "type": "file",
++          "url": "https://pypi.python.org/packages/93/73/66854f63b1941aad9af18a1de59f9cf95ad1a87c801540222e332f6688d7/Pillow-4.1.1.tar.gz",
++          "sha256": "00b6a5f28d00f720235a937ebc2f50f4292a5c7e2d6ab9a8b26153b625c4f431"
++        }
++      ]
++    },
++    {
++      "name": "fwupd",
++      "buildsystem": "meson",
++      "config-opts": [
++        "-Dconsolekit=false",
++        "-Ddaemon=false",
++        "-Dgpg=false",
++        "-Dgtkdoc=false",
++        "-Dintrospection=false",
++        "-Dman=false",
++        "-Dpkcs7=false",
++        "-Dsystemd=false",
++        "-Dtests=false",
++        "-Defi-includedir=/app/include/efi",
++        "-Defi-ldsdir=/app/lib",
++        "-Defi-libdir=/app/lib",
++        "--sysconfdir=/app/etc",
++        "--localstatedir=/var/data"
++      ],
++      "build-options" : {
++        "arch": {
++            "i386": {
++                "config-opts": [
++                  "-Dplugin_dell=false",
++                  "-Dplugin_uefi=false"
++                ]
++            },
++            "arm": {
++                "config-opts": [
++                  "-Dplugin_dell=false",
++                  "-Dplugin_uefi=false"
++                ]
++            },
++            "aarch64": {
++                "config-opts": [
++                  "-Dplugin_dell=false"
++                ]
++            }
++        }
++      },
++      "cleanup": [
++        "/etc/dbus-1/system.d/org.freedesktop.fwupd.conf",
++        "/share/fwupd/remotes.d/vendor"
++      ],
++      "sources": [
++          {
++              "type": "archive",
++              "url": "https://people.freedesktop.org/~hughsient/releases/fwupd-1.1.3.tar.xz",
++              "sha256": "474568a98af8ae82255c18da90ce2e4d290875da98638c4b1c44632c758314af"
++          }
++      ]
++    }
++  ]
++}
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/.git fwupd-1.8.6/contrib/flatpak/shared-modules/.git
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/.git	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/.git	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1 @@
++gitdir: ../../../.git/modules/contrib/flatpak/modules/shared-modules
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/README.md fwupd-1.8.6/contrib/flatpak/shared-modules/README.md
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/README.md	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/README.md	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,22 @@
++This repository contains commonly shared modules and is intended to be used as a git submodule.
++
++To use shared modules for packaging an application, add the submodule:
++
++```
++git submodule add https://github.com/flathub/shared-modules.git
++```
++
++Then modules from this repository can be specified in a manifest JSON file like this:
++
++```json
++"modules": [
++  "shared-modules/SDL/SDL-1.2.15.json",
++  {
++    "name": "foo"
++  }
++]
++```
++
++[See the description in the Flathub wiki](https://github.com/flathub/flathub/wiki/App-Requirements#shared-modules) for more information.
++
++Please do not request adding modules unless they have many users in the Flathub repository.
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/SDL/SDL-1.2.15.json fwupd-1.8.6/contrib/flatpak/shared-modules/SDL/SDL-1.2.15.json
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/SDL/SDL-1.2.15.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/SDL/SDL-1.2.15.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,36 @@
++{
++    "name": "SDL1",
++    "rm-configure": true,
++    "config-opts": ["--disable-static"],
++    "cleanup": [
++        "/bin",
++        "/share/man",
++        "/share/aclocal",
++        "/include",
++        "/lib/pkgconfig",
++        "/lib/*.la",
++        "/lib/*.a"
++    ],
++    "sources": [
++        {
++            "type": "archive",
++            "url": "https://www.libsdl.org/release/SDL-1.2.15.tar.gz",
++            "sha256": "d6d316a793e5e348155f0dd93b979798933fb98aa1edebcc108829d6474aad00"
++        },
++        {
++            "type": "patch",
++            "path": "sdl-libx11-build.patch"
++        },
++        {
++            "type": "script",
++            "dest-filename": "autogen.sh",
++            "commands": [
++                "sed -i -e 's/.*AM_PATH_ESD.*//' configure.in",
++                "cp -p /usr/share/automake-*/config.{sub,guess} build-scripts",
++                "aclocal",
++                "libtoolize",
++                "autoconf"
++            ]
++        }
++    ]
++}
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/SDL/SDL_Pango-0.1.2-API-adds.patch fwupd-1.8.6/contrib/flatpak/shared-modules/SDL/SDL_Pango-0.1.2-API-adds.patch
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/SDL/SDL_Pango-0.1.2-API-adds.patch	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/SDL/SDL_Pango-0.1.2-API-adds.patch	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,118 @@
++diff -Naupr SDL_Pango-0.1.2.orig/src/SDL_Pango.c SDL_Pango-0.1.2/src/SDL_Pango.c
++--- SDL_Pango-0.1.2.orig/src/SDL_Pango.c	2004-12-10 10:06:33.000000000 +0100
+++++ SDL_Pango-0.1.2/src/SDL_Pango.c	2006-09-29 17:42:09.000000000 +0200
++@@ -723,13 +723,8 @@ SDLPango_CopyFTBitmapToSurface(
++     SDL_UnlockSurface(surface);
++ }
++ 
++-/*!
++-    Create a context which contains Pango objects.
++-
++-    @return A pointer to the context as a SDLPango_Context*.
++-*/
++ SDLPango_Context*
++-SDLPango_CreateContext()
+++SDLPango_CreateContext_GivenFontDesc(const char* font_desc)
++ {
++     SDLPango_Context *context = g_malloc(sizeof(SDLPango_Context));
++     G_CONST_RETURN char *charset;
++@@ -743,8 +738,7 @@ SDLPango_CreateContext()
++     pango_context_set_language (context->context, pango_language_from_string (charset));
++     pango_context_set_base_dir (context->context, PANGO_DIRECTION_LTR);
++ 
++-    context->font_desc = pango_font_description_from_string(
++-	MAKE_FONT_NAME (DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE));
+++    context->font_desc = pango_font_description_from_string(font_desc);
++ 
++     context->layout = pango_layout_new (context->context);
++ 
++@@ -762,6 +756,17 @@ SDLPango_CreateContext()
++ }
++ 
++ /*!
+++    Create a context which contains Pango objects.
+++
+++    @return A pointer to the context as a SDLPango_Context*.
+++*/
+++SDLPango_Context*
+++SDLPango_CreateContext()
+++{
+++     SDLPango_CreateContext_GivenFontDesc(MAKE_FONT_NAME(DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE));
+++}
+++
+++/*!
++     Free a context.
++ 
++     @param *context [i/o] Context to be free
++@@ -1053,6 +1058,20 @@ SDLPango_SetMarkup(
++     pango_layout_set_font_description (context->layout, context->font_desc);
++ }
++ 
+++void
+++SDLPango_SetText_GivenAlignment(
+++    SDLPango_Context *context,
+++    const char *text,
+++    int length,
+++    SDLPango_Alignment alignment)
+++{
+++    pango_layout_set_attributes(context->layout, NULL);
+++    pango_layout_set_text (context->layout, text, length);
+++    pango_layout_set_auto_dir (context->layout, TRUE);
+++    pango_layout_set_alignment (context->layout, alignment);
+++    pango_layout_set_font_description (context->layout, context->font_desc);
+++}
+++
++ /*!
++     Set plain text to context.
++     Text must be utf-8.
++@@ -1067,11 +1086,7 @@ SDLPango_SetText(
++     const char *text,
++     int length)
++ {
++-    pango_layout_set_attributes(context->layout, NULL);
++-    pango_layout_set_text (context->layout, text, length);
++-    pango_layout_set_auto_dir (context->layout, TRUE);
++-    pango_layout_set_alignment (context->layout, PANGO_ALIGN_LEFT);
++-    pango_layout_set_font_description (context->layout, context->font_desc);
+++     SDLPango_SetText_GivenAlignment(context, text, length, SDLPANGO_ALIGN_LEFT);
++ }
++ 
++ /*!
++diff -Naupr SDL_Pango-0.1.2.orig/src/SDL_Pango.h SDL_Pango-0.1.2/src/SDL_Pango.h
++--- SDL_Pango-0.1.2.orig/src/SDL_Pango.h	2004-12-10 10:06:33.000000000 +0100
+++++ SDL_Pango-0.1.2/src/SDL_Pango.h	2006-09-29 17:42:09.000000000 +0200
++@@ -109,12 +109,20 @@ typedef enum {
++     SDLPANGO_DIRECTION_NEUTRAL	/*! Neutral */
++ } SDLPango_Direction;
++ 
++-
+++/*!
+++    Specifies alignment of text. See Pango reference for detail
+++*/
+++typedef enum {
+++    SDLPANGO_ALIGN_LEFT,
+++    SDLPANGO_ALIGN_CENTER,
+++    SDLPANGO_ALIGN_RIGHT
+++} SDLPango_Alignment;
++ 
++ extern DECLSPEC int SDLCALL SDLPango_Init();
++ 
++ extern DECLSPEC int SDLCALL SDLPango_WasInit();
++ 
+++extern DECLSPEC SDLPango_Context* SDLCALL SDLPango_CreateContext_GivenFontDesc(const char* font_desc);
++ extern DECLSPEC SDLPango_Context* SDLCALL SDLPango_CreateContext();
++ 
++ extern DECLSPEC void SDLCALL SDLPango_FreeContext(
++@@ -157,6 +165,12 @@ extern DECLSPEC void SDLCALL SDLPango_Se
++     const char *markup,
++     int length);
++ 
+++extern DECLSPEC void SDLCALL SDLPango_SetText_GivenAlignment(
+++    SDLPango_Context *context,
+++    const char *text,
+++    int length,
+++    SDLPango_Alignment alignment);
+++
++ extern DECLSPEC void SDLCALL SDLPango_SetText(
++     SDLPango_Context *context,
++     const char *markup,
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/SDL/SDL_image-1.2.12.json fwupd-1.8.6/contrib/flatpak/shared-modules/SDL/SDL_image-1.2.12.json
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/SDL/SDL_image-1.2.12.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/SDL/SDL_image-1.2.12.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,19 @@
++{
++    "name": "SDL_image",
++    "config-opts": ["--disable-static"],
++    "rm-configure": true,
++    "sources": [
++        {
++            "type": "archive",
++            "url": "https://www.libsdl.org/projects/SDL_image/release/SDL_image-1.2.12.tar.gz",
++            "sha256": "0b90722984561004de84847744d566809dbb9daf732a9e503b91a1b5a84e5699"
++        },
++        {
++            "type": "script",
++            "dest-filename": "autogen.sh",
++            "commands": [
++                "AUTOMAKE=\"automake --foreign\" autoreconf -vfi"
++            ]
++        }
++    ]
++}
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/SDL/SDL_mixer-1.2.12.json fwupd-1.8.6/contrib/flatpak/shared-modules/SDL/SDL_mixer-1.2.12.json
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/SDL/SDL_mixer-1.2.12.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/SDL/SDL_mixer-1.2.12.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,22 @@
++{
++    "name": "SDL_mixer",
++    "config-opts": ["--disable-static"],
++    "rm-configure": true,
++    "sources": [
++        {
++            "type": "archive",
++            "url": "https://www.libsdl.org/projects/SDL_mixer/release/SDL_mixer-1.2.12.tar.gz",
++            "sha256": "1644308279a975799049e4826af2cfc787cad2abb11aa14562e402521f86992a"
++        },
++        {
++            "type": "script",
++            "dest-filename": "autogen.sh",
++            "commands": [
++                "rm acinclude/libtool.m4",
++                "rm acinclude/lt*",
++                "AUTOMAKE=\"automake --foreign\" autoreconf -vfi -I acinclude",
++                "cp -p /usr/share/automake-*/config.{sub,guess} build-scripts"
++            ]
++        }
++    ]
++}
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/SDL/SDL_net-1.2.8.json fwupd-1.8.6/contrib/flatpak/shared-modules/SDL/SDL_net-1.2.8.json
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/SDL/SDL_net-1.2.8.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/SDL/SDL_net-1.2.8.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,19 @@
++{
++    "name": "SDL_net",
++    "config-opts": ["--disable-static"],
++    "rm-configure": true,
++    "sources": [
++        {
++            "type": "archive",
++            "url": "https://www.libsdl.org/projects/SDL_net/release/SDL_net-1.2.8.tar.gz",
++            "sha256": "5f4a7a8bb884f793c278ac3f3713be41980c5eedccecff0260411347714facb4"
++        },
++        {
++            "type": "script",
++            "dest-filename": "autogen.sh",
++            "commands": [
++                "AUTOMAKE=\"automake --foreign\" autoreconf -vfi"
++            ]
++        }
++    ]
++}
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/SDL/SDL_pango-0.1.2.json fwupd-1.8.6/contrib/flatpak/shared-modules/SDL/SDL_pango-0.1.2.json
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/SDL/SDL_pango-0.1.2.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/SDL/SDL_pango-0.1.2.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,23 @@
++{
++    "name": "SDL_pango",
++    "config-opts": ["--disable-static"],
++    "rm-configure": true,
++    "sources": [
++        {
++            "type": "archive",
++            "url": "https://downloads.sourceforge.net/project/sdlpango/SDL_Pango/0.1.2/SDL_Pango-0.1.2.tar.gz",
++            "sha256": "7f75d3b97acf707c696ea126424906204ebfa07660162de925173cdd0257eba4"
++        },
++        {
++            "type": "patch",
++            "path": "SDL_Pango-0.1.2-API-adds.patch"
++        },
++        {
++            "type": "script",
++            "dest-filename": "autogen.sh",
++            "commands": [
++                "autoreconf -vfi"
++            ]
++        }
++    ]
++}
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/SDL/SDL_ttf-2.0.11.json fwupd-1.8.6/contrib/flatpak/shared-modules/SDL/SDL_ttf-2.0.11.json
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/SDL/SDL_ttf-2.0.11.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/SDL/SDL_ttf-2.0.11.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,19 @@
++{
++    "name": "SDL_ttf",
++    "config-opts": ["--disable-static"],
++    "rm-configure": true,
++    "sources": [
++        {
++            "type": "archive",
++            "url": "https://www.libsdl.org/projects/SDL_ttf/release/SDL_ttf-2.0.11.tar.gz",
++            "sha256": "724cd895ecf4da319a3ef164892b72078bd92632a5d812111261cde248ebcdb7"
++        },
++        {
++            "type": "script",
++            "dest-filename": "autogen.sh",
++            "commands": [
++                "AUTOMAKE=\"automake --foreign\" autoreconf -vfi"
++            ]
++        }
++    ]
++}
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/SDL/sdl-libx11-build.patch fwupd-1.8.6/contrib/flatpak/shared-modules/SDL/sdl-libx11-build.patch
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/SDL/sdl-libx11-build.patch	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/SDL/sdl-libx11-build.patch	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,59 @@
++
++# HG changeset patch
++# User Azamat H. Hackimov <azamat.hackimov@gmail.com>
++# Date 1370184533 -21600
++# Node ID 91ad7b43317a6387e115ecdf63a49137f47e42c8
++# Parent  f7fd5c3951b9ed922fdf696f7182e71b58a13268
++Fix compilation with libX11 >= 1.5.99.902.
++
++These changes fixes bug #1769 for SDL 1.2
++(http://bugzilla.libsdl.org/show_bug.cgi?id=1769).
++
++diff -r f7fd5c3951b9 -r 91ad7b43317a configure.in
++--- a/configure.in	Wed Apr 17 00:56:53 2013 -0700
+++++ b/configure.in	Sun Jun 02 20:48:53 2013 +0600
++@@ -1169,6 +1169,17 @@
++             if test x$definitely_enable_video_x11_xrandr = xyes; then
++                 AC_DEFINE(SDL_VIDEO_DRIVER_X11_XRANDR)
++             fi
+++            AC_MSG_CHECKING(for const parameter to _XData32)
+++            have_const_param_xdata32=no
+++            AC_TRY_COMPILE([
+++              #include <X11/Xlibint.h>
+++              extern int _XData32(Display *dpy,register _Xconst long *data,unsigned len);
+++            ],[
+++            ],[
+++            have_const_param_xdata32=yes
+++            AC_DEFINE(SDL_VIDEO_DRIVER_X11_CONST_PARAM_XDATA32)
+++            ])
+++            AC_MSG_RESULT($have_const_param_xdata32)
++         fi
++     fi
++ }
++diff -r f7fd5c3951b9 -r 91ad7b43317a include/SDL_config.h.in
++--- a/include/SDL_config.h.in	Wed Apr 17 00:56:53 2013 -0700
+++++ b/include/SDL_config.h.in	Sun Jun 02 20:48:53 2013 +0600
++@@ -283,6 +283,7 @@
++ #undef SDL_VIDEO_DRIVER_WINDIB
++ #undef SDL_VIDEO_DRIVER_WSCONS
++ #undef SDL_VIDEO_DRIVER_X11
+++#undef SDL_VIDEO_DRIVER_X11_CONST_PARAM_XDATA32
++ #undef SDL_VIDEO_DRIVER_X11_DGAMOUSE
++ #undef SDL_VIDEO_DRIVER_X11_DYNAMIC
++ #undef SDL_VIDEO_DRIVER_X11_DYNAMIC_XEXT
++diff -r f7fd5c3951b9 -r 91ad7b43317a src/video/x11/SDL_x11sym.h
++--- a/src/video/x11/SDL_x11sym.h	Wed Apr 17 00:56:53 2013 -0700
+++++ b/src/video/x11/SDL_x11sym.h	Sun Jun 02 20:48:53 2013 +0600
++@@ -165,7 +165,11 @@
++  */
++ #ifdef LONG64
++ SDL_X11_MODULE(IO_32BIT)
+++#if SDL_VIDEO_DRIVER_X11_CONST_PARAM_XDATA32
+++SDL_X11_SYM(int,_XData32,(Display *dpy,register _Xconst long *data,unsigned len),(dpy,data,len),return)
+++#else
++ SDL_X11_SYM(int,_XData32,(Display *dpy,register long *data,unsigned len),(dpy,data,len),return)
+++#endif
++ SDL_X11_SYM(void,_XRead32,(Display *dpy,register long *data,long len),(dpy,data,len),)
++ #endif
++ 
++
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/cld2/CMakeLists.txt fwupd-1.8.6/contrib/flatpak/shared-modules/cld2/CMakeLists.txt
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/cld2/CMakeLists.txt	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/cld2/CMakeLists.txt	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,155 @@
++cmake_minimum_required(VERSION 2.8)
++project (cld2)
++enable_language(CXX)
++
++set (VERSION "0.0.197")
++set (common_SOURCE_FILES
++    internal/cldutil.cc
++    internal/cldutil_shared.cc
++    internal/compact_lang_det.cc
++    internal/compact_lang_det_hint_code.cc
++    internal/compact_lang_det_impl.cc
++    internal/debug.cc
++    internal/fixunicodevalue.cc 
++    internal/generated_entities.cc
++    internal/generated_language.cc
++    internal/generated_ulscript.cc
++    internal/getonescriptspan.cc
++    internal/lang_script.cc
++    internal/offsetmap.cc
++    internal/scoreonescriptspan.cc
++    internal/tote.cc
++    internal/utf8statetable.cc
++    )
++
++set (cld2_SOURCE_FILES
++    internal/generated_distinct_bi_0.cc
++    internal/cld_generated_cjk_uni_prop_80.cc
++    internal/cld2_generated_cjk_compatible.cc
++    internal/cld_generated_cjk_delta_bi_4.cc
++    internal/cld2_generated_quadchrome_2.cc
++    internal/cld2_generated_deltaoctachrome.cc
++    internal/cld2_generated_distinctoctachrome.cc
++    internal/cld_generated_score_quad_octa_2.cc
++    )
++
++set (cld2_full_SOURCE_FILES
++    internal/generated_distinct_bi_0.cc
++    internal/cld_generated_cjk_uni_prop_80.cc
++    internal/cld2_generated_cjk_compatible.cc
++    internal/cld_generated_cjk_delta_bi_32.cc
++    internal/cld2_generated_quad0122.cc
++    internal/cld2_generated_deltaocta0122.cc
++    internal/cld2_generated_distinctocta0122.cc
++    internal/cld_generated_score_quad_octa_0122.cc
++    )
++
++set (cld2_dynamic_SOURCE_FILES
++    internal/cld2_dynamic_data.cc
++    internal/cld2_dynamic_data_loader.cc
++    )
++
++add_library(cld2 SHARED ${common_SOURCE_FILES} ${cld2_SOURCE_FILES})
++set_target_properties(cld2 PROPERTIES
++  ENABLE_EXPORTS On
++  OUTPUT_NAME cld2
++  VERSION ${VERSION}
++  SOVERSION 0
++  )
++add_library(cld2_full SHARED ${cld2_full_SOURCE_FILES})
++set_target_properties(cld2_full PROPERTIES
++  ENABLE_EXPORTS On
++  OUTPUT_NAME cld2_full
++  VERSION ${VERSION}
++  SOVERSION 0
++  )
++
++add_library(cld2_dynamic SHARED ${cld2_dynamic_SOURCE_FILES})
++set_target_properties(cld2_dynamic PROPERTIES
++  ENABLE_EXPORTS On
++  OUTPUT_NAME cld2_dynamic
++  VERSION ${VERSION}
++  SOVERSION 0
++  COMPILE_FLAGS "-DCLD2_DYNAMIC_MODE"
++  )
++install(TARGETS cld2 DESTINATION lib/${CMAKE_LIBRARY_ARCHITECTURE})
++install(TARGETS cld2_full DESTINATION lib/${CMAKE_LIBRARY_ARCHITECTURE})
++install(TARGETS cld2_dynamic DESTINATION lib/${CMAKE_LIBRARY_ARCHITECTURE})
++
++set (cld2_internal_HEADERS
++    internal/cld2_dynamic_compat.h
++    internal/cld2_dynamic_data_extractor.h
++    internal/cld2_dynamic_data.h
++    internal/cld2_dynamic_data_loader.h
++    internal/cld2tablesummary.h
++    internal/cldutil.h
++    internal/cldutil_offline.h
++    internal/cldutil_shared.h
++    internal/compact_lang_det_hint_code.h
++    internal/compact_lang_det_impl.h
++    internal/debug.h
++    internal/fixunicodevalue.h
++    internal/generated_language.h
++    internal/generated_ulscript.h
++    internal/getonescriptspan.h
++    internal/integral_types.h
++    internal/lang_script.h
++    internal/langspan.h
++    internal/offsetmap.h
++    internal/port.h
++    internal/scoreonescriptspan.h
++    internal/stringpiece.h
++    internal/tote.h
++    internal/unittest_data.h
++    internal/utf8acceptinterchange.h
++    internal/utf8prop_lettermarkscriptnum.h
++    internal/utf8repl_lettermarklower.h
++    internal/utf8scannot_lettermarkspecial.h
++    internal/utf8statetable.h
++    )
++
++install(FILES ${cld2_internal_HEADERS} DESTINATION include/cld2/internal)
++set (cld2_public_HEADERS
++    public/compact_lang_det.h
++    public/encodings.h
++    )
++install(FILES ${cld2_public_HEADERS} DESTINATION include/cld2/public)
++
++set (full_SOURCE_FILES
++    internal/cld_generated_cjk_uni_prop_80.cc
++    internal/cld2_generated_cjk_compatible.cc
++    internal/cld_generated_cjk_delta_bi_32.cc
++    internal/generated_distinct_bi_0.cc
++    internal/cld2_generated_quad0122.cc
++    internal/cld2_generated_deltaocta0122.cc
++    internal/cld2_generated_distinctocta0122.cc
++    internal/cld_generated_score_quad_octa_0122.cc
++    )
++
++add_executable(compact_lang_det_test_full ${full_SOURCE_FILES} internal/compact_lang_det_test.cc)
++add_executable(cld2_unittest_full         ${full_SOURCE_FILES} internal/cld2_unittest_full.cc)
++add_executable(cld2_unittest_full_avoid   ${full_SOURCE_FILES} internal/cld2_unittest_full.cc)
++set_target_properties(cld2_unittest_full_avoid PROPERTIES COMPILE_FLAGS "-Davoid_utf8_string_constants")
++
++add_executable(cld2_dynamic_data_tool               internal/cld2_dynamic_data_extractor.cc internal/cld2_dynamic_data_tool.cc)
++add_executable(compact_lang_det_dynamic_test_chrome ${common_SOURCE_FILES} internal/cld2_dynamic_data_extractor.cc internal/compact_lang_det_test.cc)
++add_executable(cld2_dynamic_unittest                ${common_SOURCE_FILES} internal/cld2_unittest.cc)
++set_target_properties(compact_lang_det_dynamic_test_chrome PROPERTIES COMPILE_FLAGS "-DCLD2_DYNAMIC_MODE")
++set_target_properties(cld2_dynamic_unittest PROPERTIES COMPILE_FLAGS "-DCLD2_DYNAMIC_MODE")
++
++add_executable(compact_lang_det_test_chrome_2  internal/compact_lang_det_test.cc)
++add_executable(compact_lang_det_test_chrome_16 internal/compact_lang_det_test.cc)
++add_executable(cld2_unittest_chrome_2          internal/cld2_unittest.cc)
++add_executable(cld2_unittest_avoid_chrome_2    internal/cld2_unittest.cc)
++set_target_properties(cld2_unittest_avoid_chrome_2 PROPERTIES COMPILE_FLAGS "-Davoid_utf8_string_constants")
++
++target_link_libraries(compact_lang_det_test_full cld2)
++target_link_libraries(cld2_unittest_full cld2)
++target_link_libraries(cld2_unittest_full_avoid cld2)
++target_link_libraries(cld2_dynamic_data_tool cld2 cld2_dynamic)
++target_link_libraries(compact_lang_det_dynamic_test_chrome cld2_dynamic)
++target_link_libraries(cld2_dynamic_unittest cld2_dynamic)
++target_link_libraries(compact_lang_det_test_chrome_2 cld2)
++target_link_libraries(compact_lang_det_test_chrome_16 cld2)
++target_link_libraries(cld2_unittest_chrome_2 cld2)
++target_link_libraries(cld2_unittest_avoid_chrome_2 cld2)
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/cld2/cld2.json fwupd-1.8.6/contrib/flatpak/shared-modules/cld2/cld2.json
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/cld2/cld2.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/cld2/cld2.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,24 @@
++{
++    "name": "cld2",
++    "buildsystem": "simple",
++    "build-options": {
++	"cxxflags": "-std=c++98"
++    },
++    "build-commands": [
++	"cp CMakeLists.txt ./cld2",
++	"cd cld2 && mkdir build && cd build && cmake .. -DCMAKE_INSTALL_PREFIX=/app -DCMAKE_BUILD_TYPE=Release",
++	"cd cld2/build && make && make install"
++    ],
++    "sources":[
++        {
++            "type": "git",
++            "url": "https://github.com/CLD2Owners/cld2.git",
++            "commit": "84b58a5d7690ebf05a91406f371ce00c3daf31c0",
++            "dest": "cld2"
++        },
++        {
++            "type": "file",
++            "path": "CMakeLists.txt"
++        }
++    ]
++}
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/glew/glew.json fwupd-1.8.6/contrib/flatpak/shared-modules/glew/glew.json
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/glew/glew.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/glew/glew.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,26 @@
++{
++        "name": "glew",
++        "no-autogen": true,
++        "make-args": [
++                "GLEW_PREFIX=/app",
++                "GLEW_DEST=/app",
++                "LIBDIR=/app/lib"
++        ],
++        "make-install-args": [
++                "GLEW_PREFIX=/app",
++                "GLEW_DEST=/app",
++                "LIBDIR=/app/lib"
++        ],
++        "sources": [
++                {
++                        "type": "archive",
++                        "url": "https://downloads.sourceforge.net/project/glew/glew/2.1.0/glew-2.1.0.tgz",
++                        "sha256": "04de91e7e6763039bc11940095cd9c7f880baba82196a7765f727ac05a993c95"
++                }
++        ],
++        "cleanup": [
++                "/include",
++                "/lib/pkgconfig",
++                "/lib/*.a"
++        ]
++}
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/glu/glu-9.0.0.json fwupd-1.8.6/contrib/flatpak/shared-modules/glu/glu-9.0.0.json
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/glu/glu-9.0.0.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/glu/glu-9.0.0.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,11 @@
++{
++  "name": "glu",
++  "sources": [
++    {
++      "type": "archive",
++      "url": "https://mesa.freedesktop.org/archive/glu/glu-9.0.0.tar.bz2",
++      "sha256": "1f7ad0d379a722fcbd303aa5650c6d7d5544fde83196b42a73d1193568a4df12"
++    }
++  ],
++  "cleanup": [ "/include", "/lib/*.a", "/lib/*.la", "/lib/pkgconfig" ]
++}
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/lame/lame-3.99.5.json fwupd-1.8.6/contrib/flatpak/shared-modules/lame/lame-3.99.5.json
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/lame/lame-3.99.5.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/lame/lame-3.99.5.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,32 @@
++{
++  "name": "lame",
++  "rm-configure": true,
++  "config-opts": ["--disable-static"],
++  "sources": [
++    {
++      "type": "archive",
++      "url": "https://downloads.sourceforge.net/lame/lame-3.99.5.tar.gz",
++      "sha256": "24346b4158e4af3bd9f2e194bb23eb473c75fb7377011523353196b19b9a23ff"
++    },
++    {
++      "type": "patch",
++      "path": "lame-msse.patch"
++    },
++    {
++      "type": "patch",
++      "path": "lame-gtk1-ac-directives.patch"
++    },
++    {
++      "type": "patch",
++      "path": "lame-ansi2knr2devnull.patch"
++    },
++    {
++      "type": "script",
++      "dest-filename": "autogen.sh",
++      "commands": [
++        "autoreconf -vfi"
++      ]
++    }
++  ],
++  "cleanup": ["/bin", "/include", "/share/doc", "/share/man", "*.la"]
++}
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/lame/lame-ansi2knr2devnull.patch fwupd-1.8.6/contrib/flatpak/shared-modules/lame/lame-ansi2knr2devnull.patch
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/lame/lame-ansi2knr2devnull.patch	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/lame/lame-ansi2knr2devnull.patch	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,43 @@
++Description: Patch out remaining ansi2knr.
++Author: Dimitri John Ledkov <xnox@ubuntu.com>
++Bug-Debian: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=755111
++--- a/configure.in
+++++ b/configure.in
++@@ -78,7 +78,6 @@
++ fi
++ 
++ dnl more automake stuff
++-AM_C_PROTOTYPES
++ 
++ AC_CHECK_HEADER(dmalloc.h)
++ if test "${ac_cv_header_dmalloc_h}" = "yes"; then
++--- a/doc/man/Makefile.am
+++++ b/doc/man/Makefile.am
++@@ -1,6 +1,6 @@
++ ## $Id: Makefile.am,v 1.1 2000/10/22 11:39:44 aleidinger Exp $
++ 
++-AUTOMAKE_OPTIONS = foreign ansi2knr
+++AUTOMAKE_OPTIONS = foreign
++ 
++ man_MANS = lame.1
++ EXTRA_DIST = ${man_MANS}
++--- a/libmp3lame/i386/Makefile.am
+++++ b/libmp3lame/i386/Makefile.am
++@@ -1,6 +1,6 @@
++ ## $Id: Makefile.am,v 1.26 2011/04/04 09:42:34 aleidinger Exp $
++ 
++-AUTOMAKE_OPTIONS = foreign $(top_srcdir)/ansi2knr
+++AUTOMAKE_OPTIONS = foreign
++ 
++ DEFS = @DEFS@ @CONFIG_DEFS@
++ 
++--- a/doc/html/Makefile.am
+++++ b/doc/html/Makefile.am
++@@ -1,6 +1,6 @@
++ ## $Id: Makefile.am,v 1.7 2010/09/30 20:58:40 jaz001 Exp $
++ 
++-AUTOMAKE_OPTIONS = foreign ansi2knr
+++AUTOMAKE_OPTIONS = foreign
++ 
++ docdir = $(datadir)/doc
++ pkgdocdir = $(docdir)/$(PACKAGE)
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/lame/lame-gtk1-ac-directives.patch fwupd-1.8.6/contrib/flatpak/shared-modules/lame/lame-gtk1-ac-directives.patch
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/lame/lame-gtk1-ac-directives.patch	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/lame/lame-gtk1-ac-directives.patch	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,205 @@
++Description: Include GTK-1 autoconf directives in build system.
++Origin: http://anonscm.debian.org/gitweb/?p=pkg-multimedia/lame.git;a=tree;f=debian/patches
++Forwarded: yes
++Applied-Upstream: http://lame.cvs.sf.net/viewvc/lame/lame/acinclude.m4?revision=1.6
++
++--- a/acinclude.m4
+++++ b/acinclude.m4
++@@ -85,4 +85,197 @@
++ [AC_MSG_WARN(can't check for IEEE854 compliant 80 bit floats)]
++ )])]) # alex_IEEE854_FLOAT80
++ 
+++# Configure paths for GTK+
+++# Owen Taylor     97-11-3
++ 
+++dnl AM_PATH_GTK([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND [, MODULES]]]])
+++dnl Test for GTK, and define GTK_CFLAGS and GTK_LIBS
+++dnl
+++AC_DEFUN([AM_PATH_GTK],
+++[dnl
+++dnl Get the cflags and libraries from the gtk-config script
+++dnl
+++AC_ARG_WITH(gtk-prefix,[  --with-gtk-prefix=PFX   Prefix where GTK is installed (optional)],
+++            gtk_config_prefix="$withval", gtk_config_prefix="")
+++AC_ARG_WITH(gtk-exec-prefix,[  --with-gtk-exec-prefix=PFX Exec prefix where GTK is installed (optional)],
+++            gtk_config_exec_prefix="$withval", gtk_config_exec_prefix="")
+++AC_ARG_ENABLE(gtktest, [  --disable-gtktest       Do not try to compile and run a test GTK program],
+++        , enable_gtktest=yes)
+++
+++  for module in . $4
+++  do
+++      case "$module" in
+++         gthread)
+++             gtk_config_args="$gtk_config_args gthread"
+++         ;;
+++      esac
+++  done
+++
+++  if test x$gtk_config_exec_prefix != x ; then
+++     gtk_config_args="$gtk_config_args --exec-prefix=$gtk_config_exec_prefix"
+++     if test x${GTK_CONFIG+set} != xset ; then
+++        GTK_CONFIG=$gtk_config_exec_prefix/bin/gtk-config
+++     fi
+++  fi
+++  if test x$gtk_config_prefix != x ; then
+++     gtk_config_args="$gtk_config_args --prefix=$gtk_config_prefix"
+++     if test x${GTK_CONFIG+set} != xset ; then
+++        GTK_CONFIG=$gtk_config_prefix/bin/gtk-config
+++     fi
+++  fi
+++
+++  AC_PATH_PROG(GTK_CONFIG, gtk-config, no)
+++  min_gtk_version=ifelse([$1], ,0.99.7,$1)
+++  AC_MSG_CHECKING(for GTK - version >= $min_gtk_version)
+++  no_gtk=""
+++  if test "$GTK_CONFIG" = "no" ; then
+++    no_gtk=yes
+++  else
+++    GTK_CFLAGS=`$GTK_CONFIG $gtk_config_args --cflags`
+++    GTK_LIBS=`$GTK_CONFIG $gtk_config_args --libs`
+++    gtk_config_major_version=`$GTK_CONFIG $gtk_config_args --version | \
+++           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\1/'`
+++    gtk_config_minor_version=`$GTK_CONFIG $gtk_config_args --version | \
+++           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\2/'`
+++    gtk_config_micro_version=`$GTK_CONFIG $gtk_config_args --version | \
+++           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/'`
+++    if test "x$enable_gtktest" = "xyes" ; then
+++      ac_save_CFLAGS="$CFLAGS"
+++      ac_save_LIBS="$LIBS"
+++      CFLAGS="$CFLAGS $GTK_CFLAGS"
+++      LIBS="$GTK_LIBS $LIBS"
+++dnl
+++dnl Now check if the installed GTK is sufficiently new. (Also sanity
+++dnl checks the results of gtk-config to some extent
+++dnl
+++      rm -f conf.gtktest
+++      AC_TRY_RUN([
+++#include <gtk/gtk.h>
+++#include <stdio.h>
+++#include <stdlib.h>
+++
+++int
+++main ()
+++{
+++  int major, minor, micro;
+++  char *tmp_version;
+++
+++  system ("touch conf.gtktest");
+++
+++  /* HP/UX 9 (%@#!) writes to sscanf strings */
+++  tmp_version = g_strdup("$min_gtk_version");
+++  if (sscanf(tmp_version, "%d.%d.%d", &major, &minor, &micro) != 3) {
+++     printf("%s, bad version string\n", "$min_gtk_version");
+++     exit(1);
+++   }
+++
+++  if ((gtk_major_version != $gtk_config_major_version) ||
+++      (gtk_minor_version != $gtk_config_minor_version) ||
+++      (gtk_micro_version != $gtk_config_micro_version))
+++    {
+++      printf("\n*** 'gtk-config --version' returned %d.%d.%d, but GTK+ (%d.%d.%d)\n",
+++             $gtk_config_major_version, $gtk_config_minor_version, $gtk_config_micro_version,
+++             gtk_major_version, gtk_minor_version, gtk_micro_version);
+++      printf ("*** was found! If gtk-config was correct, then it is best\n");
+++      printf ("*** to remove the old version of GTK+. You may also be able to fix the error\n");
+++      printf("*** by modifying your LD_LIBRARY_PATH enviroment variable, or by editing\n");
+++      printf("*** /etc/ld.so.conf. Make sure you have run ldconfig if that is\n");
+++      printf("*** required on your system.\n");
+++      printf("*** If gtk-config was wrong, set the environment variable GTK_CONFIG\n");
+++      printf("*** to point to the correct copy of gtk-config, and remove the file config.cache\n");
+++      printf("*** before re-running configure\n");
+++    }
+++#if defined (GTK_MAJOR_VERSION) && defined (GTK_MINOR_VERSION) && defined (GTK_MICRO_VERSION)
+++  else if ((gtk_major_version != GTK_MAJOR_VERSION) ||
+++     (gtk_minor_version != GTK_MINOR_VERSION) ||
+++           (gtk_micro_version != GTK_MICRO_VERSION))
+++    {
+++      printf("*** GTK+ header files (version %d.%d.%d) do not match\n",
+++       GTK_MAJOR_VERSION, GTK_MINOR_VERSION, GTK_MICRO_VERSION);
+++      printf("*** library (version %d.%d.%d)\n",
+++       gtk_major_version, gtk_minor_version, gtk_micro_version);
+++    }
+++#endif /* defined (GTK_MAJOR_VERSION) ... */
+++  else
+++    {
+++      if ((gtk_major_version > major) ||
+++        ((gtk_major_version == major) && (gtk_minor_version > minor)) ||
+++        ((gtk_major_version == major) && (gtk_minor_version == minor) && (gtk_micro_version >= micro)))
+++      {
+++        return 0;
+++       }
+++     else
+++      {
+++        printf("\n*** An old version of GTK+ (%d.%d.%d) was found.\n",
+++               gtk_major_version, gtk_minor_version, gtk_micro_version);
+++        printf("*** You need a version of GTK+ newer than %d.%d.%d. The latest version of\n",
+++         major, minor, micro);
+++        printf("*** GTK+ is always available from ftp://ftp.gtk.org.\n");
+++        printf("***\n");
+++        printf("*** If you have already installed a sufficiently new version, this error\n");
+++        printf("*** probably means that the wrong copy of the gtk-config shell script is\n");
+++        printf("*** being found. The easiest way to fix this is to remove the old version\n");
+++        printf("*** of GTK+, but you can also set the GTK_CONFIG environment to point to the\n");
+++        printf("*** correct copy of gtk-config. (In this case, you will have to\n");
+++        printf("*** modify your LD_LIBRARY_PATH enviroment variable, or edit /etc/ld.so.conf\n");
+++        printf("*** so that the correct libraries are found at run-time))\n");
+++      }
+++    }
+++  return 1;
+++}
+++],, no_gtk=yes,[echo $ac_n "cross compiling; assumed OK... $ac_c"])
+++       CFLAGS="$ac_save_CFLAGS"
+++       LIBS="$ac_save_LIBS"
+++     fi
+++  fi
+++  if test "x$no_gtk" = x ; then
+++     AC_MSG_RESULT(yes)
+++     ifelse([$2], , :, [$2])
+++  else
+++     AC_MSG_RESULT(no)
+++     if test "$GTK_CONFIG" = "no" ; then
+++       echo "*** The gtk-config script installed by GTK could not be found"
+++       echo "*** If GTK was installed in PREFIX, make sure PREFIX/bin is in"
+++       echo "*** your path, or set the GTK_CONFIG environment variable to the"
+++       echo "*** full path to gtk-config."
+++     else
+++       if test -f conf.gtktest ; then
+++        :
+++       else
+++          echo "*** Could not run GTK test program, checking why..."
+++          CFLAGS="$CFLAGS $GTK_CFLAGS"
+++          LIBS="$LIBS $GTK_LIBS"
+++          AC_TRY_LINK([
+++#include <gtk/gtk.h>
+++#include <stdio.h>
+++],      [ return ((gtk_major_version) || (gtk_minor_version) || (gtk_micro_version)); ],
+++        [ echo "*** The test program compiled, but did not run. This usually means"
+++          echo "*** that the run-time linker is not finding GTK or finding the wrong"
+++          echo "*** version of GTK. If it is not finding GTK, you'll need to set your"
+++          echo "*** LD_LIBRARY_PATH environment variable, or edit /etc/ld.so.conf to point"
+++          echo "*** to the installed location  Also, make sure you have run ldconfig if that"
+++          echo "*** is required on your system"
+++    echo "***"
+++          echo "*** If you have an old version installed, it is best to remove it, although"
+++          echo "*** you may also be able to get things to work by modifying LD_LIBRARY_PATH"
+++          echo "***"
+++          echo "*** If you have a RedHat 5.0 system, you should remove the GTK package that"
+++          echo "*** came with the system with the command"
+++          echo "***"
+++          echo "***    rpm --erase --nodeps gtk gtk-devel" ],
+++        [ echo "*** The test program failed to compile or link. See the file config.log for the"
+++          echo "*** exact error that occured. This usually means GTK was incorrectly installed"
+++          echo "*** or that you have moved GTK since it was installed. In the latter case, you"
+++          echo "*** may want to edit the gtk-config script: $GTK_CONFIG" ])
+++          CFLAGS="$ac_save_CFLAGS"
+++          LIBS="$ac_save_LIBS"
+++       fi
+++     fi
+++     GTK_CFLAGS=""
+++     GTK_LIBS=""
+++     ifelse([$3], , :, [$3])
+++  fi
+++  AC_SUBST(GTK_CFLAGS)
+++  AC_SUBST(GTK_LIBS)
+++  rm -f conf.gtktest
+++])
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/lame/lame-msse.patch fwupd-1.8.6/contrib/flatpak/shared-modules/lame/lame-msse.patch
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/lame/lame-msse.patch	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/lame/lame-msse.patch	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,17 @@
++Description: Build xmm_quantize_sub.c with -msse
++Author: Sebastian Ramacher <sramacher@debian.org>
++Bug: http://sourceforge.net/p/lame/bugs/443/
++Bug-Debian: https://bugs.debian.org/760047
++Forwarded: http://sourceforge.net/p/lame/bugs/443/
++Last-Update: 2014-08-31
++
++--- lame-3.99.5+repack1.orig/libmp3lame/vector/Makefile.am
+++++ lame-3.99.5+repack1/libmp3lame/vector/Makefile.am
++@@ -20,6 +20,7 @@ xmm_sources = xmm_quantize_sub.c
++ 
++ if WITH_XMM
++ liblamevectorroutines_la_SOURCES = $(xmm_sources)
+++liblamevectorroutines_la_CFLAGS = -msse
++ endif
++ 
++ noinst_HEADERS = lame_intrin.h
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/libappindicator/Makefile fwupd-1.8.6/contrib/flatpak/shared-modules/libappindicator/Makefile
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/libappindicator/Makefile	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/libappindicator/Makefile	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,10 @@
++all: libappindicator-gtk3-introspection-12.10.json libappindicator-gtk3-12.10.json libappindicator-gtk2-12.10.json
++
++libappindicator-gtk3-introspection-12.10.json: libappindicator.json.in
++	sed -e 's/@GTK_VER@/3/g' -e 's/@INTROSPECTION@/yes/g' $< > $@
++
++libappindicator-gtk3-12.10.json: libappindicator.json.in
++	sed -e 's/@GTK_VER@/3/g' -e 's/@INTROSPECTION@/no/g' $< > $@
++
++libappindicator-gtk2-12.10.json: libappindicator.json.in
++	sed -e 's/@GTK_VER@/2/g' -e 's/@INTROSPECTION@/no/g' $< > $@
+\ No newline at end of file
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/libappindicator/libappindicator-ftbfs.patch fwupd-1.8.6/contrib/flatpak/shared-modules/libappindicator/libappindicator-ftbfs.patch
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/libappindicator/libappindicator-ftbfs.patch	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/libappindicator/libappindicator-ftbfs.patch	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,20 @@
++From: Olivier Tilloy <olivier.tilloy@canonical.com>
++Date: Tue 2018-03-20 12:47:56 +0000
++Subject: [PATCH] libappindicator FTBFS on bionic
++
++Fix build failures on bionic,
++and update Vcs-* fields in debian/control. (LP: #1757121)
++
++Approved by: Marco Trevisan (Treviño)
++---
++--- libappindicator-12.10.0/src/app-indicator.c	2017-02-15 14:10:41 +0000
+++++ libappindicator-12.10.0/src/app-indicator.c	2018-03-20 12:38:59 +0000
++@@ -2196,7 +2196,7 @@ app_indicator_set_secondary_activate_tar
++ 
++ 	g_return_if_fail (GTK_IS_WIDGET (menuitem));
++ 
++-	priv->sec_activate_target = g_object_ref(G_OBJECT(menuitem));
+++	priv->sec_activate_target = g_object_ref(menuitem);
++ 	priv->sec_activate_enabled = widget_is_menu_child(self, menuitem);
++ 	g_signal_connect(menuitem, "parent-set", G_CALLBACK(sec_activate_target_parent_changed), self);
++ }
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/libappindicator/libappindicator-gtk2-12.10.json fwupd-1.8.6/contrib/flatpak/shared-modules/libappindicator/libappindicator-gtk2-12.10.json
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/libappindicator/libappindicator-gtk2-12.10.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/libappindicator/libappindicator-gtk2-12.10.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,122 @@
++{
++  "name": "libappindicator",
++  "build-options": {
++    "cflags": "-Wno-error=deprecated-declarations"
++  },
++  "rm-configure": true,
++  "config-opts": [
++    "--disable-static",
++    "--disable-gtk-doc",
++    "--disable-tests",
++    "--disable-mono-tests",
++    "--enable-introspection=no",
++    "--with-gtk=2"
++  ],
++  "cleanup": [
++    "/include",
++    "/lib/pkgconfig",
++    "/lib/*.la",
++    "/share/gtk-doc",
++    "/share/gir-1.0"
++  ],
++  "sources": [
++    {
++      "type": "archive",
++      "url": "https://launchpad.net/libappindicator/12.10/12.10.0/+download/libappindicator-12.10.0.tar.gz",
++      "sha256": "d5907c1f98084acf28fd19593cb70672caa0ca1cf82d747ba6f4830d4cc3b49f"
++    },
++    {
++      "type": "patch",
++      "path": "libappindicator-ftbfs.patch"
++    },
++    {
++      "type": "shell",
++      "commands": [
++        "# Disable python bindings",
++        "sed -e '/APPINDICATOR_PYTHON/,/\\$PYGTK_CODEGEN/ d' -i configure.ac",
++        "sed -e '/bindings/ d' -e '/example/ d' -i Makefile.am"
++      ]
++    },
++    {
++      "type": "script",
++      "commands": ["autoreconf -sfi"],
++      "dest-filename": "autogen.sh"
++    }
++  ],
++  "modules": [
++    {
++      "name": "libdbusmenu",
++      "build-options": {
++        "env": {
++          "HAVE_VALGRIND_FALSE": "#",
++          "HAVE_VALGRIND_TRUE": ""
++        }
++      },
++      "cleanup": [
++        "/include",
++        "/libexec",
++        "/lib/pkgconfig",
++        "/lib/*.la",
++        "/share/doc",
++        "/share/libdbusmenu",
++        "/share/gtk-doc",
++        "/share/gir-1.0"
++      ],
++      "config-opts": [
++        "--disable-static",
++        "--disable-gtk-doc",
++        "--enable-introspection=no",
++        "--disable-vala",
++        "--disable-dumper",
++        "--disable-tests",
++        "--with-gtk=2"
++      ],
++      "sources": [
++        {
++          "type": "archive",
++          "url": "https://launchpad.net/libdbusmenu/16.04/16.04.0/+download/libdbusmenu-16.04.0.tar.gz",
++          "sha256": "b9cc4a2acd74509435892823607d966d424bd9ad5d0b00938f27240a1bfa878a"
++        }
++      ]
++    },
++    {
++      "name": "libindicator",
++      "build-options": {
++        "cflags": "-Wno-error=deprecated-declarations"
++      },
++      "cleanup": [
++        "/include",
++        "/libexec",
++        "/lib/pkgconfig",
++        "/lib/*.la",
++        "/share/libindicator",
++        "/share/gtk-doc",
++        "/share/gir-1.0"
++      ],
++      "config-opts": [
++        "--disable-static",
++        "--disable-tests",
++        "--with-gtk=2"
++      ],
++      "sources": [
++        {
++          "type": "archive",
++          "url": "https://launchpad.net/libindicator/12.10/12.10.1/+download/libindicator-12.10.1.tar.gz",
++          "sha256": "b2d2e44c10313d5c9cd60db455d520f80b36dc39562df079a3f29495e8f9447f"
++        },
++        {
++          "type": "shell",
++          "commands": [
++            "# FTBFS fix",
++            "sed -e '/LIBINDICATOR_LIBS/ s/\\$LIBM/ $LIBM/' -i configure.ac"
++          ]
++        },
++        {
++          "type": "script",
++          "commands": ["autoreconf -sfi"],
++          "dest-filename": "autogen.sh"
++        }
++      ]
++    }
++  ]
++}
+\ No newline at end of file
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/libappindicator/libappindicator-gtk3-12.10.json fwupd-1.8.6/contrib/flatpak/shared-modules/libappindicator/libappindicator-gtk3-12.10.json
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/libappindicator/libappindicator-gtk3-12.10.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/libappindicator/libappindicator-gtk3-12.10.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,122 @@
++{
++  "name": "libappindicator",
++  "build-options": {
++    "cflags": "-Wno-error=deprecated-declarations"
++  },
++  "rm-configure": true,
++  "config-opts": [
++    "--disable-static",
++    "--disable-gtk-doc",
++    "--disable-tests",
++    "--disable-mono-tests",
++    "--enable-introspection=no",
++    "--with-gtk=3"
++  ],
++  "cleanup": [
++    "/include",
++    "/lib/pkgconfig",
++    "/lib/*.la",
++    "/share/gtk-doc",
++    "/share/gir-1.0"
++  ],
++  "sources": [
++    {
++      "type": "archive",
++      "url": "https://launchpad.net/libappindicator/12.10/12.10.0/+download/libappindicator-12.10.0.tar.gz",
++      "sha256": "d5907c1f98084acf28fd19593cb70672caa0ca1cf82d747ba6f4830d4cc3b49f"
++    },
++    {
++      "type": "patch",
++      "path": "libappindicator-ftbfs.patch"
++    },
++    {
++      "type": "shell",
++      "commands": [
++        "# Disable python bindings",
++        "sed -e '/APPINDICATOR_PYTHON/,/\\$PYGTK_CODEGEN/ d' -i configure.ac",
++        "sed -e '/bindings/ d' -e '/example/ d' -i Makefile.am"
++      ]
++    },
++    {
++      "type": "script",
++      "commands": ["autoreconf -sfi"],
++      "dest-filename": "autogen.sh"
++    }
++  ],
++  "modules": [
++    {
++      "name": "libdbusmenu",
++      "build-options": {
++        "env": {
++          "HAVE_VALGRIND_FALSE": "#",
++          "HAVE_VALGRIND_TRUE": ""
++        }
++      },
++      "cleanup": [
++        "/include",
++        "/libexec",
++        "/lib/pkgconfig",
++        "/lib/*.la",
++        "/share/doc",
++        "/share/libdbusmenu",
++        "/share/gtk-doc",
++        "/share/gir-1.0"
++      ],
++      "config-opts": [
++        "--disable-static",
++        "--disable-gtk-doc",
++        "--enable-introspection=no",
++        "--disable-vala",
++        "--disable-dumper",
++        "--disable-tests",
++        "--with-gtk=3"
++      ],
++      "sources": [
++        {
++          "type": "archive",
++          "url": "https://launchpad.net/libdbusmenu/16.04/16.04.0/+download/libdbusmenu-16.04.0.tar.gz",
++          "sha256": "b9cc4a2acd74509435892823607d966d424bd9ad5d0b00938f27240a1bfa878a"
++        }
++      ]
++    },
++    {
++      "name": "libindicator",
++      "build-options": {
++        "cflags": "-Wno-error=deprecated-declarations"
++      },
++      "cleanup": [
++        "/include",
++        "/libexec",
++        "/lib/pkgconfig",
++        "/lib/*.la",
++        "/share/libindicator",
++        "/share/gtk-doc",
++        "/share/gir-1.0"
++      ],
++      "config-opts": [
++        "--disable-static",
++        "--disable-tests",
++        "--with-gtk=3"
++      ],
++      "sources": [
++        {
++          "type": "archive",
++          "url": "https://launchpad.net/libindicator/12.10/12.10.1/+download/libindicator-12.10.1.tar.gz",
++          "sha256": "b2d2e44c10313d5c9cd60db455d520f80b36dc39562df079a3f29495e8f9447f"
++        },
++        {
++          "type": "shell",
++          "commands": [
++            "# FTBFS fix",
++            "sed -e '/LIBINDICATOR_LIBS/ s/\\$LIBM/ $LIBM/' -i configure.ac"
++          ]
++        },
++        {
++          "type": "script",
++          "commands": ["autoreconf -sfi"],
++          "dest-filename": "autogen.sh"
++        }
++      ]
++    }
++  ]
++}
+\ No newline at end of file
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/libappindicator/libappindicator-gtk3-introspection-12.10.json fwupd-1.8.6/contrib/flatpak/shared-modules/libappindicator/libappindicator-gtk3-introspection-12.10.json
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/libappindicator/libappindicator-gtk3-introspection-12.10.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/libappindicator/libappindicator-gtk3-introspection-12.10.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,122 @@
++{
++  "name": "libappindicator",
++  "build-options": {
++    "cflags": "-Wno-error=deprecated-declarations"
++  },
++  "rm-configure": true,
++  "config-opts": [
++    "--disable-static",
++    "--disable-gtk-doc",
++    "--disable-tests",
++    "--disable-mono-tests",
++    "--enable-introspection=yes",
++    "--with-gtk=3"
++  ],
++  "cleanup": [
++    "/include",
++    "/lib/pkgconfig",
++    "/lib/*.la",
++    "/share/gtk-doc",
++    "/share/gir-1.0"
++  ],
++  "sources": [
++    {
++      "type": "archive",
++      "url": "https://launchpad.net/libappindicator/12.10/12.10.0/+download/libappindicator-12.10.0.tar.gz",
++      "sha256": "d5907c1f98084acf28fd19593cb70672caa0ca1cf82d747ba6f4830d4cc3b49f"
++    },
++    {
++      "type": "patch",
++      "path": "libappindicator-ftbfs.patch"
++    },
++    {
++      "type": "shell",
++      "commands": [
++        "# Disable python bindings",
++        "sed -e '/APPINDICATOR_PYTHON/,/\\$PYGTK_CODEGEN/ d' -i configure.ac",
++        "sed -e '/bindings/ d' -e '/example/ d' -i Makefile.am"
++      ]
++    },
++    {
++      "type": "script",
++      "commands": ["autoreconf -sfi"],
++      "dest-filename": "autogen.sh"
++    }
++  ],
++  "modules": [
++    {
++      "name": "libdbusmenu",
++      "build-options": {
++        "env": {
++          "HAVE_VALGRIND_FALSE": "#",
++          "HAVE_VALGRIND_TRUE": ""
++        }
++      },
++      "cleanup": [
++        "/include",
++        "/libexec",
++        "/lib/pkgconfig",
++        "/lib/*.la",
++        "/share/doc",
++        "/share/libdbusmenu",
++        "/share/gtk-doc",
++        "/share/gir-1.0"
++      ],
++      "config-opts": [
++        "--disable-static",
++        "--disable-gtk-doc",
++        "--enable-introspection=yes",
++        "--disable-vala",
++        "--disable-dumper",
++        "--disable-tests",
++        "--with-gtk=3"
++      ],
++      "sources": [
++        {
++          "type": "archive",
++          "url": "https://launchpad.net/libdbusmenu/16.04/16.04.0/+download/libdbusmenu-16.04.0.tar.gz",
++          "sha256": "b9cc4a2acd74509435892823607d966d424bd9ad5d0b00938f27240a1bfa878a"
++        }
++      ]
++    },
++    {
++      "name": "libindicator",
++      "build-options": {
++        "cflags": "-Wno-error=deprecated-declarations"
++      },
++      "cleanup": [
++        "/include",
++        "/libexec",
++        "/lib/pkgconfig",
++        "/lib/*.la",
++        "/share/libindicator",
++        "/share/gtk-doc",
++        "/share/gir-1.0"
++      ],
++      "config-opts": [
++        "--disable-static",
++        "--disable-tests",
++        "--with-gtk=3"
++      ],
++      "sources": [
++        {
++          "type": "archive",
++          "url": "https://launchpad.net/libindicator/12.10/12.10.1/+download/libindicator-12.10.1.tar.gz",
++          "sha256": "b2d2e44c10313d5c9cd60db455d520f80b36dc39562df079a3f29495e8f9447f"
++        },
++        {
++          "type": "shell",
++          "commands": [
++            "# FTBFS fix",
++            "sed -e '/LIBINDICATOR_LIBS/ s/\\$LIBM/ $LIBM/' -i configure.ac"
++          ]
++        },
++        {
++          "type": "script",
++          "commands": ["autoreconf -sfi"],
++          "dest-filename": "autogen.sh"
++        }
++      ]
++    }
++  ]
++}
+\ No newline at end of file
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/libappindicator/libappindicator.json.in fwupd-1.8.6/contrib/flatpak/shared-modules/libappindicator/libappindicator.json.in
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/libappindicator/libappindicator.json.in	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/libappindicator/libappindicator.json.in	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,122 @@
++{
++  "name": "libappindicator",
++  "build-options": {
++    "cflags": "-Wno-error=deprecated-declarations"
++  },
++  "rm-configure": true,
++  "config-opts": [
++    "--disable-static",
++    "--disable-gtk-doc",
++    "--disable-tests",
++    "--disable-mono-tests",
++    "--enable-introspection=@INTROSPECTION@",
++    "--with-gtk=@GTK_VER@"
++  ],
++  "cleanup": [
++    "/include",
++    "/lib/pkgconfig",
++    "/lib/*.la",
++    "/share/gtk-doc",
++    "/share/gir-1.0"
++  ],
++  "sources": [
++    {
++      "type": "archive",
++      "url": "https://launchpad.net/libappindicator/12.10/12.10.0/+download/libappindicator-12.10.0.tar.gz",
++      "sha256": "d5907c1f98084acf28fd19593cb70672caa0ca1cf82d747ba6f4830d4cc3b49f"
++    },
++    {
++      "type": "patch",
++      "path": "libappindicator-ftbfs.patch"
++    },
++    {
++      "type": "shell",
++      "commands": [
++        "# Disable python bindings",
++        "sed -e '/APPINDICATOR_PYTHON/,/\\$PYGTK_CODEGEN/ d' -i configure.ac",
++        "sed -e '/bindings/ d' -e '/example/ d' -i Makefile.am"
++      ]
++    },
++    {
++      "type": "script",
++      "commands": ["autoreconf -sfi"],
++      "dest-filename": "autogen.sh"
++    }
++  ],
++  "modules": [
++    {
++      "name": "libdbusmenu",
++      "build-options": {
++        "env": {
++          "HAVE_VALGRIND_FALSE": "#",
++          "HAVE_VALGRIND_TRUE": ""
++        }
++      },
++      "cleanup": [
++        "/include",
++        "/libexec",
++        "/lib/pkgconfig",
++        "/lib/*.la",
++        "/share/doc",
++        "/share/libdbusmenu",
++        "/share/gtk-doc",
++        "/share/gir-1.0"
++      ],
++      "config-opts": [
++        "--disable-static",
++        "--disable-gtk-doc",
++        "--enable-introspection=@INTROSPECTION@",
++        "--disable-vala",
++        "--disable-dumper",
++        "--disable-tests",
++        "--with-gtk=@GTK_VER@"
++      ],
++      "sources": [
++        {
++          "type": "archive",
++          "url": "https://launchpad.net/libdbusmenu/16.04/16.04.0/+download/libdbusmenu-16.04.0.tar.gz",
++          "sha256": "b9cc4a2acd74509435892823607d966d424bd9ad5d0b00938f27240a1bfa878a"
++        }
++      ]
++    },
++    {
++      "name": "libindicator",
++      "build-options": {
++        "cflags": "-Wno-error=deprecated-declarations"
++      },
++      "cleanup": [
++        "/include",
++        "/libexec",
++        "/lib/pkgconfig",
++        "/lib/*.la",
++        "/share/libindicator",
++        "/share/gtk-doc",
++        "/share/gir-1.0"
++      ],
++      "config-opts": [
++        "--disable-static",
++        "--disable-tests",
++        "--with-gtk=@GTK_VER@"
++      ],
++      "sources": [
++        {
++          "type": "archive",
++          "url": "https://launchpad.net/libindicator/12.10/12.10.1/+download/libindicator-12.10.1.tar.gz",
++          "sha256": "b2d2e44c10313d5c9cd60db455d520f80b36dc39562df079a3f29495e8f9447f"
++        },
++        {
++          "type": "shell",
++          "commands": [
++            "# FTBFS fix",
++            "sed -e '/LIBINDICATOR_LIBS/ s/\\$LIBM/ $LIBM/' -i configure.ac"
++          ]
++        },
++        {
++          "type": "script",
++          "commands": ["autoreconf -sfi"],
++          "dest-filename": "autogen.sh"
++        }
++      ]
++    }
++  ]
++}
+\ No newline at end of file
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/lua5.3/lua-5.3.0-autotoolize.patch fwupd-1.8.6/contrib/flatpak/shared-modules/lua5.3/lua-5.3.0-autotoolize.patch
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/lua5.3/lua-5.3.0-autotoolize.patch	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/lua5.3/lua-5.3.0-autotoolize.patch	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,192 @@
++diff -up lua-5.3.0/configure.ac.autoxxx lua-5.3.0/configure.ac
++--- lua-5.3.0/configure.ac.autoxxx	2015-01-15 10:20:03.826889574 -0500
+++++ lua-5.3.0/configure.ac	2015-01-15 10:20:03.826889574 -0500
++@@ -0,0 +1,69 @@
+++AC_PREREQ(2.59)
+++AC_INIT([lua], [5.3.0], [https://bugzilla.redhat.com/], [lua-at], [http://www.lua.org])
+++AC_SUBST([MAJOR_VERSION], [5.3])
+++
+++AC_CONFIG_HEADERS([config.h])
+++AC_CONFIG_SRCDIR([src/lapi.c])
+++
+++AM_INIT_AUTOMAKE([1.9 foreign])
+++
+++AC_PROG_CC
+++AC_PROG_LIBTOOL
+++
+++AC_ARG_WITH(
+++  [readline],
+++  [AC_HELP_STRING([--with-readline], [Use readline for interpreter input [default=yes]])],
+++  [use_readline=$withval],
+++  [use_readline=yes]
+++)
+++
+++LUA_LIBS="-lm"
+++
+++# Check for readline
+++READLINE_DEFS="#undef LUA_USE_READLINE"
+++if test "x$use_readline" == "xyes"; then
+++  AC_CHECK_LIB([readline], [readline], [:], [use_readline=no], [-lncurses])
+++  AC_CHECK_HEADERS([readline/readline.h readline/history.h], [], [use_readline=no])
+++  if test "x$use_readline" == "xno"; then
+++    AC_MSG_WARN([readline headers could not be found, disabling readline support])
+++  else
+++    READLINE_DEFS="#define LUA_USE_READLINE"
+++    READLINE_LIBS="-lreadline -lncurses"
+++  fi
+++fi
+++AC_SUBST(READLINE_DEFS)
+++AC_SUBST(READLINE_LIBS)
+++
+++case "$host" in
+++  *-mingw*)  use_os=win32  ;;
+++  *-darwin*) use_os=macosx ;;
+++  *)         use_os=posix  ;;
+++esac
+++
+++POSIX_DEFS="#undef LUA_USE_POSIX"
+++LUA_DL_DEFS="#undef LUA_USE_DLOPEN"
+++LUA_BUILD_AS_DLL_DEFS="#undef LUA_BUILD_AS_DLL"
+++
+++if test "x$use_os" == "xwin32"; then
+++  LUA_BUILD_AS_DLL_DEFS="#define LUA_BUILD_AS_DLL"
+++elif test "x$use_os" == "xmacosx"; then
+++  POSIX_DEFS="#define LUA_USE_POSIX"
+++  LUA_DL_DEFS="#define LUA_DL_DYLD"
+++elif test "x$use_os" == "xposix"; then
+++  POSIX_DEFS="#define LUA_USE_POSIX"
+++  LUA_DL_DEFS="#define LUA_DL_DLOPEN"
+++  LUA_LIBS="$LUA_LIBS -ldl"
+++fi
+++AC_SUBST(POSIX_DEFS)
+++AC_SUBST(LUA_DL_DEFS)
+++AC_SUBST(LUA_BUILD_AS_DLL_DEFS)
+++
+++AC_SUBST(LUA_LIBS)
+++
+++AC_CONFIG_FILES([Makefile
+++                 src/Makefile
+++                 src/lua.pc
+++                 src/luaconf.h.template
+++                 doc/Makefile
+++])
+++AC_OUTPUT
++diff -up lua-5.3.0/doc/Makefile.am.autoxxx lua-5.3.0/doc/Makefile.am
++--- lua-5.3.0/doc/Makefile.am.autoxxx	2015-01-15 10:20:03.826889574 -0500
+++++ lua-5.3.0/doc/Makefile.am	2015-01-15 10:20:03.826889574 -0500
++@@ -0,0 +1,4 @@
+++man1_MANS = lua.1 luac.1
+++
+++EXTRA_DIST = \
+++	contents.html logo.gif lua.1 luac.1 lua.css manual.css manual.html osi-certified-72x60.png readme.html
++diff -up lua-5.3.0/Makefile.am.autoxxx lua-5.3.0/Makefile.am
++--- lua-5.3.0/Makefile.am.autoxxx	2015-01-15 10:20:03.826889574 -0500
+++++ lua-5.3.0/Makefile.am	2015-01-15 10:20:03.826889574 -0500
++@@ -0,0 +1,3 @@
+++SUBDIRS = src doc
+++
+++EXTRA_DIST = README
++diff -up lua-5.3.0/src/.gitignore.autoxxx lua-5.3.0/src/.gitignore
++--- lua-5.3.0/src/.gitignore.autoxxx	2015-01-15 10:20:03.826889574 -0500
+++++ lua-5.3.0/src/.gitignore	2015-01-15 10:20:03.826889574 -0500
++@@ -0,0 +1,5 @@
+++lua
+++lua.pc
+++luac
+++luaconf.h
+++luaconf.h.template
++diff -up lua-5.3.0/src/luaconf.h.template.in.autoxxx lua-5.3.0/src/luaconf.h.template.in
++--- lua-5.3.0/src/luaconf.h.template.in.autoxxx	2015-01-15 10:20:03.828889562 -0500
+++++ lua-5.3.0/src/luaconf.h.template.in	2015-01-15 10:22:37.420027778 -0500
++@@ -11,6 +11,11 @@
++ #include <limits.h>
++ #include <stddef.h>
++ 
+++@POSIX_DEFS@
+++@LUA_DL_DEFS@
+++@LUA_BUILD_AS_DLL_DEFS@
+++@READLINE_DEFS@
+++
++ 
++ /*
++ ** ===================================================================
++@@ -175,9 +180,9 @@
++ 
++ #else			/* }{ */
++ 
++-#define LUA_ROOT	"/usr/local/"
++-#define LUA_LDIR	LUA_ROOT "share/lua/" LUA_VDIR "/"
++-#define LUA_CDIR	LUA_ROOT "lib/lua/" LUA_VDIR "/"
+++#define LUA_ROOT	"@prefix@/"
+++#define LUA_LDIR	"@pkgdatadir@/lua/" LUA_VDIR "/"
+++#define LUA_CDIR	"@libdir@/lua/" LUA_VDIR "/"
++ #define LUA_PATH_DEFAULT  \
++ 		LUA_LDIR"?.lua;"  LUA_LDIR"?/init.lua;" \
++ 		LUA_CDIR"?.lua;"  LUA_CDIR"?/init.lua;" \
++diff -up lua-5.3.0/src/lua.pc.in.autoxxx lua-5.3.0/src/lua.pc.in
++--- lua-5.3.0/src/lua.pc.in.autoxxx	2015-01-15 10:20:03.827889568 -0500
+++++ lua-5.3.0/src/lua.pc.in	2015-01-15 10:20:03.827889568 -0500
++@@ -0,0 +1,13 @@
+++V= @MAJOR_VERSION@
+++R= @VERSION@
+++prefix= @prefix@
+++exec_prefix=${prefix}
+++libdir= @libdir@
+++includedir=${prefix}/include
+++
+++Name: Lua
+++Description: An Extensible Extension Language
+++Version: ${R}
+++Requires:
+++Libs: -llua @LUA_LIBS@
+++Cflags: -I${includedir}
++diff -up lua-5.3.0/src/Makefile.am.autoxxx lua-5.3.0/src/Makefile.am
++--- lua-5.3.0/src/Makefile.am.autoxxx	2015-01-15 10:20:03.826889574 -0500
+++++ lua-5.3.0/src/Makefile.am	2015-01-15 10:20:03.826889574 -0500
++@@ -0,0 +1,46 @@
+++AM_CFLAGS = -Wall
+++
+++include_HEADERS = lua.h lualib.h lauxlib.h lua.hpp
+++
+++nodist_include_HEADERS = luaconf.h
+++
+++lib_LTLIBRARIES = liblua.la
+++liblua_la_LDFLAGS = -release @MAJOR_VERSION@
+++liblua_la_SOURCES = \
+++	lapi.c lauxlib.c lbaselib.c lbitlib.c lcode.c lcorolib.c lctype.c ldblib.c \
+++	ldebug.c ldo.c ldump.c lfunc.c lgc.c linit.c liolib.c llex.c lmathlib.c lmem.c \
+++	loadlib.c lobject.c lopcodes.c loslib.c lparser.c lstate.c lstring.c lstrlib.c \
+++	ltable.c ltablib.c ltm.c lundump.c lutf8lib.c lvm.c lzio.c \
+++	lapi.h lcode.h lctype.h ldebug.h ldo.h lfunc.h lgc.h llex.h llimits.h \
+++	lmem.h lobject.h lopcodes.h lparser.h lstate.h lstring.h ltable.h ltm.h \
+++	lundump.h lvm.h lzio.h
+++
+++pkgconfigdir = $(libdir)/pkgconfig
+++pkgconfig_DATA = lua.pc
+++
+++bin_PROGRAMS = lua luac
+++
+++lua_SOURCES = lua.c
+++lua_LDADD = liblua.la @LUA_LIBS@ @READLINE_LIBS@
+++lua_DEPENDENCIES = liblua.la
+++
+++luac_SOURCES = luac.c
+++# Statically link liblua against luac since luac uses symbols not exported in liblua
+++luac_LDADD = .libs/liblua.a @LUA_LIBS@
+++luac_DEPENDENCIES = liblua.la
+++
+++EXTRA_DIST = luaconf.h.template
+++BUILT_SOURCES = luaconf.h
+++CLEANFILES = luaconf.h luaconf.h.template
+++
+++readline_defs = @READLINE_DEFS@
+++
+++edit = 	sed \
+++	  -e 's,%prefix%,$(prefix),g' \
+++	  -e 's,%lua_datadir%,$(datadir),g' \
+++	  -e 's,%lua_libdir%,$(libdir),g'
+++
+++luaconf.h : luaconf.h.template
+++	rm -f $@ $@.tmp
+++	$(edit) $< >$@.tmp
+++	mv $@.tmp $@
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/lua5.3/lua-5.3.0-configure-compat-module.patch fwupd-1.8.6/contrib/flatpak/shared-modules/lua5.3/lua-5.3.0-configure-compat-module.patch
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/lua5.3/lua-5.3.0-configure-compat-module.patch	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/lua5.3/lua-5.3.0-configure-compat-module.patch	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,35 @@
++diff -up lua-5.2.2/configure.ac.compat-module lua-5.2.2/configure.ac
++--- lua-5.2.2/configure.ac.compat-module	2013-05-10 10:16:05.344137597 -0400
+++++ lua-5.2.2/configure.ac	2013-05-10 10:16:05.357137596 -0400
++@@ -11,6 +11,20 @@ AC_PROG_CC
++ AC_PROG_LIBTOOL
++ 
++ AC_ARG_WITH(
+++  [compat-module],
+++  [AC_HELP_STRING([--with-compat-module], [Enable LUA_COMPAT_MODULE functions [default=no]])],
+++  [use_compat_module=$withval],
+++  [use_compat_module=no]
+++)
+++
+++COMPAT_DEFS="#undef LUA_COMPAT_ALL"
+++if test "x$use_compat_module" == "xyes"; then
+++  COMPAT_DEFS="#define LUA_COMPAT_5_1
+++#define LUA_COMPAT_5_2"
+++fi
+++AC_SUBST(COMPAT_DEFS)
+++
+++AC_ARG_WITH(
++   [readline],
++   [AC_HELP_STRING([--with-readline], [Use readline for interpreter input [default=yes]])],
++   [use_readline=$withval],
++diff -up lua-5.2.2/src/luaconf.h.template.in.compat-module lua-5.2.2/src/luaconf.h.template.in
++--- lua-5.2.2/src/luaconf.h.template.in.compat-module	2013-05-10 10:25:42.586116963 -0400
+++++ lua-5.2.2/src/luaconf.h.template.in	2013-05-10 10:26:29.957115269 -0400
++@@ -15,6 +15,7 @@
++ @LUA_DL_DEFS@
++ @LUA_BUILD_AS_DLL_DEFS@
++ @READLINE_DEFS@
+++@COMPAT_DEFS@
++ 
++ 
++ /*
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/lua5.3/lua-5.3.0-idsize.patch fwupd-1.8.6/contrib/flatpak/shared-modules/lua5.3/lua-5.3.0-idsize.patch
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/lua5.3/lua-5.3.0-idsize.patch	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/lua5.3/lua-5.3.0-idsize.patch	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,12 @@
++diff -up lua-5.3.0/src/luaconf.h.template.in.idsize lua-5.3.0/src/luaconf.h.template.in
++--- lua-5.3.0/src/luaconf.h.template.in.idsize	2015-01-15 10:23:20.515801344 -0500
+++++ lua-5.3.0/src/luaconf.h.template.in	2015-01-15 10:23:48.955651916 -0500
++@@ -693,7 +693,7 @@
++ @@ of a function in debug information.
++ ** CHANGE it if you want a different size.
++ */
++-#define LUA_IDSIZE	60
+++#define LUA_IDSIZE	512
++ 
++ 
++ /*
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/lua5.3/lua-5.3.2.json fwupd-1.8.6/contrib/flatpak/shared-modules/lua5.3/lua-5.3.2.json
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/lua5.3/lua-5.3.2.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/lua5.3/lua-5.3.2.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,34 @@
++{
++    "name": "lua-5.3",
++    "config-opts": [
++        "--with-compat-module"
++    ],
++    "sources": [
++        {
++            "type": "archive",
++            "url": "https://www.lua.org/ftp/lua-5.3.4.tar.gz",
++            "sha256": "f681aa518233bc407e23acf0f5887c884f17436f000d453b2491a9f11a52400c"
++        },
++        {
++            "type": "shell",
++            "commands": [ "mv src/luaconf.h src/luaconf.h.template.in" ]
++        },
++        {
++            "type": "patch",
++            "path": "lua-5.3.0-autotoolize.patch"
++        },
++        {
++            "type": "patch",
++            "path": "lua-5.3.0-idsize.patch"
++        },
++        {
++            "type": "patch",
++            "path": "lua-5.3.0-configure-compat-module.patch"
++        },
++        {
++            "type": "shell",
++            "commands": [ "autoreconf -i" ]
++        }
++    ],
++    "cleanup": [ "/bin" ]
++}
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/pygame/audiofile-gcc6.patch fwupd-1.8.6/contrib/flatpak/shared-modules/pygame/audiofile-gcc6.patch
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/pygame/audiofile-gcc6.patch	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/pygame/audiofile-gcc6.patch	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,21 @@
++From b62c902dd258125cac86cd2df21fc898035a43d3 Mon Sep 17 00:00:00 2001
++From: Michael Pruett <michael@68k.org>
++Date: Mon, 29 Aug 2016 23:08:26 -0500
++Subject: [PATCH] Fix undefined behavior in sign conversion.
++Origin: https://github.com/mpruett/audiofile/commit/b62c902dd258125cac86cd2df21fc898035a43d3
++
++---
++diff --git a/libaudiofile/modules/SimpleModule.h b/libaudiofile/modules/SimpleModule.h
++index 03c6c69..bad85ad 100644
++--- a/libaudiofile/modules/SimpleModule.h
+++++ b/libaudiofile/modules/SimpleModule.h
++@@ -123,7 +123,8 @@ struct signConverter
++ 	typedef typename IntTypes<Format>::UnsignedType UnsignedType;
++ 
++ 	static const int kScaleBits = (Format + 1) * CHAR_BIT - 1;
++-	static const int kMinSignedValue = -1 << kScaleBits;
+++	static const int kMaxSignedValue = (((1 << (kScaleBits - 1)) - 1) << 1) + 1;
+++	static const int kMinSignedValue = -kMaxSignedValue - 1;
++ 
++ 	struct signedToUnsigned : public std::unary_function<SignedType, UnsignedType>
++ 	{
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/pygame/fluidsynth-no-rawmidi.patch fwupd-1.8.6/contrib/flatpak/shared-modules/pygame/fluidsynth-no-rawmidi.patch
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/pygame/fluidsynth-no-rawmidi.patch	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/pygame/fluidsynth-no-rawmidi.patch	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,69 @@
++diff -rupN fluidsynth-1.1.6.orig/src/drivers/fluid_alsa.c fluidsynth-1.1.6/src/drivers/fluid_alsa.c
++--- fluidsynth-1.1.6.orig/src/drivers/fluid_alsa.c	2012-08-16 05:01:13.000000000 +0100
+++++ fluidsynth-1.1.6/src/drivers/fluid_alsa.c	2017-02-28 21:26:57.033244239 +0000
++@@ -96,7 +96,7 @@ struct fluid_alsa_formats_t fluid_alsa_f
++ };
++ 
++ 
++-
+++#if 0
++ /*
++  * fluid_alsa_rawmidi_driver_t
++  *
++@@ -119,7 +119,7 @@ fluid_midi_driver_t* new_fluid_alsa_rawm
++ 
++ int delete_fluid_alsa_rawmidi_driver(fluid_midi_driver_t* p);
++ static void fluid_alsa_midi_run(void* d);
++-
+++#endif
++ 
++ /*
++  * fluid_alsa_seq_driver_t
++@@ -535,7 +535,7 @@ static void fluid_alsa_audio_run_s16 (vo
++  *
++  */
++ 
++-
+++#if 0
++ void fluid_alsa_rawmidi_driver_settings(fluid_settings_t* settings)
++ {
++   fluid_settings_register_str(settings, "midi.alsa.device", "default", 0, NULL, NULL);
++@@ -698,7 +698,7 @@ fluid_alsa_midi_run(void* d)
++     }
++   }
++ }
++-
+++#endif
++ /**************************************************************
++  *
++  *        Alsa sequencer
++diff -rupN fluidsynth-1.1.6.orig/src/drivers/fluid_mdriver.c fluidsynth-1.1.6/src/drivers/fluid_mdriver.c
++--- fluidsynth-1.1.6.orig/src/drivers/fluid_mdriver.c	2012-08-16 05:01:13.000000000 +0100
+++++ fluidsynth-1.1.6/src/drivers/fluid_mdriver.c	2017-02-28 21:24:43.887833321 +0000
++@@ -24,11 +24,13 @@
++ 
++ /* ALSA */
++ #if ALSA_SUPPORT
+++#if 0
++ fluid_midi_driver_t* new_fluid_alsa_rawmidi_driver(fluid_settings_t* settings,
++ 						 handle_midi_event_func_t handler,
++ 						 void* event_handler_data);
++ int delete_fluid_alsa_rawmidi_driver(fluid_midi_driver_t* p);
++ void fluid_alsa_rawmidi_driver_settings(fluid_settings_t* settings);
+++#endif
++ 
++ fluid_midi_driver_t* new_fluid_alsa_seq_driver(fluid_settings_t* settings,
++ 					     handle_midi_event_func_t handler,
++@@ -109,10 +111,12 @@ struct fluid_mdriver_definition_t fluid_
++     fluid_oss_midi_driver_settings },
++ #endif
++ #if ALSA_SUPPORT
+++#if 0
++   { "alsa_raw",
++     new_fluid_alsa_rawmidi_driver,
++     delete_fluid_alsa_rawmidi_driver,
++     fluid_alsa_rawmidi_driver_settings },
+++#endif
++   { "alsa_seq",
++     new_fluid_alsa_seq_driver,
++     delete_fluid_alsa_seq_driver,
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/pygame/portmidi-no-java.patch fwupd-1.8.6/contrib/flatpak/shared-modules/pygame/portmidi-no-java.patch
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/pygame/portmidi-no-java.patch	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/pygame/portmidi-no-java.patch	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,105 @@
++diff -rupN portmidi.orig/CMakeLists.txt portmidi/CMakeLists.txt
++--- portmidi.orig/CMakeLists.txt	2010-09-20 15:57:48.000000000 +0100
+++++ portmidi/CMakeLists.txt	2017-03-03 13:50:58.494561245 +0000
++@@ -71,7 +71,3 @@ add_subdirectory(pm_common)
++ add_subdirectory(pm_test)
++ 
++ add_subdirectory(pm_dylib)
++-
++-# Cannot figure out how to make an xcode Java application with CMake
++-add_subdirectory(pm_java)
++-
++diff -rupN portmidi.orig/pm_common/CMakeLists.txt portmidi/pm_common/CMakeLists.txt
++--- portmidi.orig/pm_common/CMakeLists.txt	2010-09-20 15:57:48.000000000 +0100
+++++ portmidi/pm_common/CMakeLists.txt	2017-03-03 14:02:32.851938051 +0000
++@@ -67,14 +67,6 @@ if(UNIX)
++     message(STATUS "SYSROOT: " ${CMAKE_OSX_SYSROOT})
++   else(APPLE)
++     # LINUX settings...
++-    include(FindJNI)
++-    message(STATUS "JAVA_JVM_LIB_PATH is " ${JAVA_JVM_LIB_PATH})
++-    message(STATUS "JAVA_INCLUDE_PATH is " ${JAVA_INCLUDE_PATH})
++-    message(STATUS "JAVA_INCLUDE_PATH2 is " ${JAVA_INCLUDE_PATH2})
++-    message(STATUS "JAVA_JVM_LIBRARY is " ${JAVA_JVM_LIBRARY})
++-    set(JAVA_INCLUDE_PATHS ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
++-    # libjvm.so is found relative to JAVA_INCLUDE_PATH:
++-    set(JAVAVM_LIB ${JAVA_JVM_LIBRARY}/libjvm.so)
++ 
++     set(LINUXSRC pmlinuxalsa pmlinux finddefault)
++     prepend_path(LIBSRC ../pm_linux/ ${LINUXSRC})
++@@ -99,7 +91,6 @@ else(UNIX)
++     set(PM_NEEDED_LIBS winmm.lib)
++   endif(WIN32)
++ endif(UNIX)
++-set(JNI_EXTRA_LIBS ${PM_NEEDED_LIBS} ${JAVA_JVM_LIBRARY})
++ 
++ # this completes the list of library sources by adding shared code
++ list(APPEND LIBSRC pmutil portmidi)
++@@ -109,19 +100,11 @@ add_library(portmidi-static ${LIBSRC})
++ set_target_properties(portmidi-static PROPERTIES OUTPUT_NAME "portmidi_s")
++ target_link_libraries(portmidi-static ${PM_NEEDED_LIBS})
++ 
++-# define the jni library
++-include_directories(${JAVA_INCLUDE_PATHS})
++-
++-set(JNISRC ${LIBSRC} ../pm_java/pmjni/pmjni.c)
++-add_library(pmjni SHARED ${JNISRC})
++-target_link_libraries(pmjni ${JNI_EXTRA_LIBS})
++-set_target_properties(pmjni PROPERTIES EXECUTABLE_EXTENSION "jnilib")
++-
++ # install the libraries (Linux and Mac OS X command line)
++ if(UNIX)
++-  INSTALL(TARGETS portmidi-static pmjni
++-    LIBRARY DESTINATION /usr/local/lib
++-    ARCHIVE DESTINATION /usr/local/lib)
+++  INSTALL(TARGETS portmidi-static
+++    LIBRARY DESTINATION /app/lib
+++    ARCHIVE DESTINATION /app/lib)
++ # .h files installed by pm_dylib/CMakeLists.txt, so don't need them here
++ #  INSTALL(FILES portmidi.h ../porttime/porttime.h
++ #    DESTINATION /usr/local/include)
++diff -rupN portmidi.orig/pm_dylib/CMakeLists.txt portmidi/pm_dylib/CMakeLists.txt
++--- portmidi.orig/pm_dylib/CMakeLists.txt	2009-11-20 00:41:10.000000000 +0000
+++++ portmidi/pm_dylib/CMakeLists.txt	2017-03-03 14:03:56.807104521 +0000
++@@ -63,7 +63,6 @@ if(UNIX)
++     message(STATUS "SYSROOT: " ${CMAKE_OSX_SYSROOT})
++   else(APPLE)
++     # LINUX settings...
++-    include(FindJNI)
++     # message(STATUS "JAVA_JVM_LIB_PATH is " ${JAVA_JVM_LIB_PATH})
++     # message(STATUS "JAVA_INCLUDE_PATH is " ${JAVA_INCLUDE_PATH})
++     # note: should use JAVA_JVM_LIB_PATH, but it is not set properly
++@@ -75,12 +74,7 @@ if(UNIX)
++     # JAVA_INCLUDE_PATH2; if no, then we need to make both JAVA_INCLUDE_PATH
++     # and JAVA_INCLUDE_PATH2 set by user (will need clear documentation
++     # because JAVA_INCLUDE_PATH2 is pretty obscure)
++-    set(JAVA_INCLUDE_PATH  ${JAVA_INCLUDE_PATH-UNKNOWN}
++-        CACHE STRING "where to find Java SDK include directory")
++-    set(JAVA_INCLUDE_PATHS ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH}/linux)
++-    # libjvm.so is found relative to JAVA_INCLUDE_PATH:
++-    set(JAVAVM_LIB ${JAVA_INCLUDE_PATH}/../jre/lib/i386/client/libjvm.so)
++-
+++    
++     set(LINUXSRC pmlinuxalsa pmlinux finddefault)
++     prepend_path(LIBSRC ../pm_linux/ ${LINUXSRC})
++     list(APPEND LIBSRC ../porttime/ptlinux)
++@@ -106,7 +100,6 @@ else(UNIX)
++     # message(STATUS "JAVAVM_LIB: " ${JAVAVM_LIB})
++   endif(WIN32)
++ endif(UNIX)
++-set(JNI_EXTRA_LIBS ${PM_NEEDED_LIBS} ${JAVAVM_LIB})
++ 
++ # this completes the list of library sources by adding shared code
++ set(SHARED_FILES pmutil portmidi)
++@@ -120,8 +113,8 @@ target_link_libraries(portmidi-dynamic $
++ # install the libraries (Linux and Mac OS X command line)
++ if(UNIX)
++   INSTALL(TARGETS portmidi-dynamic
++-    LIBRARY DESTINATION /usr/local/lib
++-    ARCHIVE DESTINATION /usr/local/lib)
+++    LIBRARY DESTINATION /app/lib
+++    ARCHIVE DESTINATION /app/lib)
++   INSTALL(FILES ../pm_common/portmidi.h ../porttime/porttime.h
++-    DESTINATION /usr/local/include)
+++    DESTINATION /app/include)
++ endif(UNIX)
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/pygame/pygame-1.9.3.json fwupd-1.8.6/contrib/flatpak/shared-modules/pygame/pygame-1.9.3.json
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/pygame/pygame-1.9.3.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/pygame/pygame-1.9.3.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,94 @@
++{
++    "name": "pygame",
++    "sources": [
++        {
++            "type": "archive",
++            "url": "https://pypi.python.org/packages/61/06/3c25051549c252cc6fde01c8aeae90b96831370884504fe428a623316def/pygame-1.9.3.tar.gz",
++            "sha256": "751021819bdc0cbe5cbd51904abb6ff9e9aee5b0e8955af02284d0e77d6c9ec2"
++        },
++        {
++            "type": "patch",
++            "path": "pygame-add-search-dirs.patch"
++        }
++    ],
++    "buildsystem": "simple",
++    "build-commands": [
++      "pip3 install --ignore-installed --no-deps --prefix=/app ."
++    ],
++    "build-options": {
++      "env": {
++        "PORTMIDI_INC_PORTTIME": "1",
++        "LOCALBASE": "/app"
++      }
++    },
++    "modules": [
++        "../SDL/SDL-1.2.15.json",
++        "../SDL/SDL_image-1.2.12.json",
++        "../SDL/SDL_ttf-2.0.11.json",
++        "../smpeg/smpeg-0.4.5.json",
++        "../SDL/SDL_mixer-1.2.12.json",
++        {
++            "name": "audiofile",
++            "sources": [
++                {
++                    "type": "archive",
++                    "url": "http://audiofile.68k.org/audiofile-0.3.6.tar.gz",
++                    "sha256": "cdc60df19ab08bfe55344395739bb08f50fc15c92da3962fac334d3bff116965"
++                },
++                {
++                    "type": "patch",
++                    "path": "audiofile-gcc6.patch"
++                }
++            ]
++        },
++        {
++            "name": "libmikmod",
++            "sources": [
++                {
++                    "type": "archive",
++                    "url": "https://sourceforge.net/projects/mikmod/files/libmikmod/3.3.11.1/libmikmod-3.3.11.1.tar.gz",
++                    "sha256": "ad9d64dfc8f83684876419ea7cd4ff4a41d8bcd8c23ef37ecb3a200a16b46d19"
++                }
++            ]
++        },
++        {
++            "name": "fluidsynth",    
++            "buildsystem": "cmake-ninja",
++            "config-opts": [
++              "-DCMAKE_BUILD_TYPE=Release"
++            ],
++            "sources": [
++                {
++                    "type": "archive",
++                    "url": "https://downloads.sourceforge.net/project/fluidsynth/fluidsynth-1.1.6/fluidsynth-1.1.6.tar.bz2",
++                    "sha256": "d28b47dfbf7f8e426902ae7fa2981d821fbf84f41da9e1b85be933d2d748f601"
++                },
++                {
++                    "type": "patch",
++                    "path": "fluidsynth-no-rawmidi.patch"
++                }
++            ]
++        },
++        {
++            "name": "portmidi",
++            "buildsystem": "cmake-ninja",
++            "config-opts": [
++              "-DCMAKE_BUILD_TYPE=Release",
++              "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY:STRING=/app/lib",
++              "-DCMAKE_ARCHIVE_OUTPUT_DIRECTORY:STRING=/app/lib",
++              "-DCMAKE_RUNTIME_OUTPUT_DIRECTORY:STRING=/app/bin"
++            ],
++            "sources": [
++                {
++                    "type": "archive",
++                    "url": "http://downloads.sourceforge.net/project/portmedia/portmidi/217/portmidi-src-217.zip",
++                    "sha256": "08e9a892bd80bdb1115213fb72dc29a7bf2ff108b378180586aa65f3cfd42e0f"
++                },
++                {
++                    "type": "patch",
++                    "path": "portmidi-no-java.patch"
++                }
++            ]
++        }
++    ]
++}
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/pygame/pygame-add-search-dirs.patch fwupd-1.8.6/contrib/flatpak/shared-modules/pygame/pygame-add-search-dirs.patch
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/pygame/pygame-add-search-dirs.patch	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/pygame/pygame-add-search-dirs.patch	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,27 @@
++diff -r 407caa445ee0 config_unix.py
++--- a/config_unix.py	Mon Jan 16 21:12:10 2017 +0000
+++++ b/config_unix.py	Fri Mar 03 15:10:07 2017 +0000
++@@ -110,6 +110,12 @@
++             self.found = 1
++         else:
++             print (self.name + '        '[len(self.name):] + ': not found')
+++            print('incname',  incname)
+++            print('incdirs', incdirs)
+++            print('self.inc_dir', self.inc_dir)
+++            print('libnames', libnames)
+++            print('libdirs', libdirs)
+++            print('self.lib_dir', self.lib_dir)
++ 
++ 
++ class DependencyPython:
++@@ -195,8 +201,8 @@
++     incdirs += ["/usr/local"+d for d in origincdirs]
++     libdirs += ["/usr/local"+d for d in origlibdirs]
++     if localbase:
++-        incdirs = [localbase+d for d in origincdirs]
++-        libdirs = [localbase+d for d in origlibdirs]
+++        incdirs += [localbase+d for d in origincdirs]
+++        libdirs += [localbase+d for d in origlibdirs]
++ 
++     for arg in DEPS[0].cflags.split():
++         if arg[:2] == '-I':
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/python2.7/python-2.7.15.json fwupd-1.8.6/contrib/flatpak/shared-modules/python2.7/python-2.7.15.json
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/python2.7/python-2.7.15.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/python2.7/python-2.7.15.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,46 @@
++{
++    "name": "python-2.7",
++    "sources": [
++        {
++            "type": "archive",
++            "url": "https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tgz",
++            "sha256": "18617d1f15a380a919d517630a9cd85ce17ea602f9bbdc58ddc672df4b0239db"
++        }
++    ],
++    "config-opts": [
++        "--enable-shared",
++        "--with-ensurepip=yes",
++        "--with-system-expat",
++        "--with-system-ffi",
++        "--enable-loadable-sqlite-extensions",
++        "--with-dbmliborder=gdbm",
++        "--enable-unicode=ucs4"
++    ],
++    "post-install": [
++        /* Theres seem to be a permissions missmatch that causes the debug stripping to fail */
++        "chmod 644 /app/lib/libpython2.7.so.1.0"
++    ],
++    "cleanup": [
++        "/bin/2to3*",
++        "/bin/easy_install*",
++        "/bin/idle*",
++        "/bin/pyvenv*",
++        "/bin/pydoc*",
++        "/include",
++        "/share",
++
++        /* Test scripts */
++        "/lib/python*/test",
++        "/lib/python*/*/test",
++        "/lib/python*/*/tests",
++        "/lib/python*/lib-tk/test",
++        "/lib/python*/lib-dynload/_*_test.*.so",
++        "/lib/python*/lib-dynload/_test*.*.so",
++
++        /* Unused modules */
++        "/lib/python*/idlelib",
++        "/lib/python*/tkinter*",
++        "/lib/python*/turtle*",
++        "/lib/python*/lib2to3*"
++    ]
++}
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/qt4/qt4-4.8.7-minimal.json fwupd-1.8.6/contrib/flatpak/shared-modules/qt4/qt4-4.8.7-minimal.json
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/qt4/qt4-4.8.7-minimal.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/qt4/qt4-4.8.7-minimal.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,86 @@
++{
++    "name": "qt4",
++    "config-opts": [
++        "-verbose",
++        "-confirm-license",
++        "-opensource",
++        "-release",
++        "-shared",
++        "-no-static",
++        "-fast",
++        "-datadir", "/app/lib/qt4",
++        "-importdir", "/app/lib/qt4/imports",
++        "-plugindir", "/app/lib/qt4/plugins",
++        "-translationdir", "/app/share/qt4/translations",
++        "-accessibility",
++        "-exceptions",
++        "-fontconfig",
++        "-glib",
++        "-dbus-linked",
++        "-openssl-linked",
++        "-optimized-qmake",
++        "-system-libjpeg",
++        "-system-libpng",
++        "-system-libtiff",
++        "-system-proxies",
++        "-system-zlib",
++        "-no-cups",
++        "-no-declarative",
++        "-no-gtkstyle",
++        "-no-javascript-jit",
++        "-no-libmng",
++        "-no-multimedia",
++        "-no-nis",
++        "-no-opengl",
++        "-no-phonon",
++        "-no-phonon-backend",
++        "-no-qt3support",
++        "-no-rpath",
++        "-no-script",
++        "-no-scripttools",
++        "-no-sql-db2",
++        "-no-sql-ibase",
++        "-no-sql-mysql",
++        "-no-sql-oci",
++        "-no-sql-odbc",
++        "-no-sql-psql",
++        "-no-sql-sqlite",
++        "-no-sql-sqlite2",
++        "-no-sql-sqlite_symbian",
++        "-no-sql-symsql",
++        "-no-sql-tds",
++        "-no-svg",
++        "-no-webkit",
++        "-no-xmlpatterns",
++        "-nomake", "demos",
++        "-nomake", "docs",
++        "-nomake", "examples"
++    ],
++    "build-options": {
++        "env": {
++            "CXXFLAGS": "-std=gnu++98",
++            "LD_LIBRARY_PATH": "/run/build/qt4/lib/"
++        }
++    },
++    "sources": [
++        {
++            "type": "archive",
++            "url": "https://download.qt.io/archive/qt/4.8/4.8.7/qt-everywhere-opensource-src-4.8.7.tar.gz",
++            "sha256": "e2882295097e47fe089f8ac741a95fef47e0a73a3f3cdf21b56990638f626ea0"
++        },
++        {
++            "type": "patch",
++            "path": "qt4-aarch64.patch"
++        }
++    ],
++    "cleanup": [
++        "/bin",
++        "/include",
++        "/lib/*.a",
++        "/lib/*.la",
++        "/lib/*.prl",
++        "/lib/pkgconfig",
++        "/lib/qt4/mkspecs",
++        "/lib/qt4/q3porting.xml"
++    ]
++}
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/qt4/qt4-aarch64.patch fwupd-1.8.6/contrib/flatpak/shared-modules/qt4/qt4-aarch64.patch
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/qt4/qt4-aarch64.patch	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/qt4/qt4-aarch64.patch	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,514 @@
++diff -up qt-everywhere-opensource-src-4.8.7/include/QtCore/headers.pri.aarch64 qt-everywhere-opensource-src-4.8.7/include/QtCore/headers.pri
++--- qt-everywhere-opensource-src-4.8.7/include/QtCore/headers.pri.aarch64	2015-05-08 21:48:32.714057739 -0500
+++++ qt-everywhere-opensource-src-4.8.7/include/QtCore/headers.pri	2015-05-08 21:53:21.088761971 -0500
++@@ -1,3 +1,3 @@
++-SYNCQT.HEADER_FILES = ../corelib/kernel/qabstracteventdispatcher.h ../corelib/kernel/qabstractitemmodel.h ../corelib/kernel/qbasictimer.h ../corelib/kernel/qcoreapplication.h ../corelib/kernel/qcoreevent.h ../corelib/kernel/qeventloop.h ../corelib/kernel/qfunctions_nacl.h ../corelib/kernel/qfunctions_vxworks.h ../corelib/kernel/qfunctions_wince.h ../corelib/kernel/qmath.h ../corelib/kernel/qmetaobject.h ../corelib/kernel/qmetatype.h ../corelib/kernel/qmimedata.h ../corelib/kernel/qobject.h ../corelib/kernel/qobjectcleanuphandler.h ../corelib/kernel/qobjectdefs.h ../corelib/kernel/qpointer.h ../corelib/kernel/qsharedmemory.h ../corelib/kernel/qsignalmapper.h ../corelib/kernel/qsocketnotifier.h ../corelib/kernel/qsystemsemaphore.h ../corelib/kernel/qtimer.h ../corelib/kernel/qtranslator.h ../corelib/kernel/qvariant.h ../corelib/animation/qabstractanimation.h ../corelib/animation/qanimationgroup.h ../corelib/animation/qparallelanimationgroup.h ../corelib/animation/qpauseanimation.h ../corelib/animation/qpropertyanimation.h ../corelib/animation/qsequentialanimationgroup.h ../corelib/animation/qvariantanimation.h ../corelib/arch/qatomic_alpha.h ../corelib/arch/qatomic_arch.h ../corelib/arch/qatomic_arm.h ../corelib/arch/qatomic_armv5.h ../corelib/arch/qatomic_armv6.h ../corelib/arch/qatomic_armv7.h ../corelib/arch/qatomic_avr32.h ../corelib/arch/qatomic_bfin.h ../corelib/arch/qatomic_bootstrap.h ../corelib/arch/qatomic_generic.h ../corelib/arch/qatomic_i386.h ../corelib/arch/qatomic_ia64.h ../corelib/arch/qatomic_integrity.h ../corelib/arch/qatomic_m68k.h ../corelib/arch/qatomic_macosx.h ../corelib/arch/qatomic_mips.h ../corelib/arch/qatomic_parisc.h ../corelib/arch/qatomic_powerpc.h ../corelib/arch/qatomic_s390.h ../corelib/arch/qatomic_sh.h ../corelib/arch/qatomic_sh4a.h ../corelib/arch/qatomic_sparc.h ../corelib/arch/qatomic_symbian.h ../corelib/arch/qatomic_vxworks.h ../corelib/arch/qatomic_windows.h ../corelib/arch/qatomic_windowsce.h ../corelib/arch/qatomic_x86_64.h ../corelib/tools/qalgorithms.h ../corelib/tools/qbitarray.h ../corelib/tools/qbytearray.h ../corelib/tools/qbytearraymatcher.h ../corelib/tools/qcache.h ../corelib/tools/qchar.h ../corelib/tools/qcontainerfwd.h ../corelib/tools/qcontiguouscache.h ../corelib/tools/qcryptographichash.h ../corelib/tools/qdatetime.h ../corelib/tools/qeasingcurve.h ../corelib/tools/qelapsedtimer.h ../corelib/tools/qhash.h ../corelib/tools/qiterator.h ../corelib/tools/qline.h ../corelib/tools/qlinkedlist.h ../corelib/tools/qlist.h ../corelib/tools/qlocale.h ../corelib/tools/qlocale_blackberry.h ../corelib/tools/qmap.h ../corelib/tools/qmargins.h ../corelib/tools/qpair.h ../corelib/tools/qpoint.h ../corelib/tools/qqueue.h ../corelib/tools/qrect.h ../corelib/tools/qregexp.h ../corelib/tools/qscopedpointer.h ../corelib/tools/qscopedvaluerollback.h ../corelib/tools/qset.h ../corelib/tools/qshareddata.h ../corelib/tools/qsharedpointer.h ../corelib/tools/qsharedpointer_impl.h ../corelib/tools/qsize.h ../corelib/tools/qstack.h ../corelib/tools/qstring.h ../corelib/tools/qstringbuilder.h ../corelib/tools/qstringlist.h ../corelib/tools/qstringmatcher.h ../corelib/tools/qtextboundaryfinder.h ../corelib/tools/qtimeline.h ../corelib/tools/qvarlengtharray.h ../corelib/tools/qvector.h ../corelib/plugin/qfactoryinterface.h ../corelib/plugin/qlibrary.h ../corelib/plugin/qplugin.h ../corelib/plugin/qpluginloader.h ../corelib/plugin/quuid.h ../corelib/xml/qxmlstream.h ../corelib/thread/qatomic.h ../corelib/thread/qbasicatomic.h ../corelib/thread/qmutex.h ../corelib/thread/qreadwritelock.h ../corelib/thread/qsemaphore.h ../corelib/thread/qthread.h ../corelib/thread/qthreadstorage.h ../corelib/thread/qwaitcondition.h ../corelib/statemachine/qabstractstate.h ../corelib/statemachine/qabstracttransition.h ../corelib/statemachine/qeventtransition.h ../corelib/statemachine/qfinalstate.h ../corelib/statemachine/qhistorystate.h ../corelib/statemachine/qsignaltransition.h ../corelib/statemachine/qstate.h ../corelib/statemachine/qstatemachine.h ../corelib/concurrent/qfuture.h ../corelib/concurrent/qfutureinterface.h ../corelib/concurrent/qfuturesynchronizer.h ../corelib/concurrent/qfuturewatcher.h ../corelib/concurrent/qrunnable.h ../corelib/concurrent/qtconcurrentcompilertest.h ../corelib/concurrent/qtconcurrentexception.h ../corelib/concurrent/qtconcurrentfilter.h ../corelib/concurrent/qtconcurrentfilterkernel.h ../corelib/concurrent/qtconcurrentfunctionwrappers.h ../corelib/concurrent/qtconcurrentiteratekernel.h ../corelib/concurrent/qtconcurrentmap.h ../corelib/concurrent/qtconcurrentmapkernel.h ../corelib/concurrent/qtconcurrentmedian.h ../corelib/concurrent/qtconcurrentreducekernel.h ../corelib/concurrent/qtconcurrentresultstore.h ../corelib/concurrent/qtconcurrentrun.h ../corelib/concurrent/qtconcurrentrunbase.h ../corelib/concurrent/qtconcurrentstoredfunctioncall.h ../corelib/concurrent/qtconcurrentthreadengine.h ../corelib/concurrent/qthreadpool.h ../corelib/io/qabstractfileengine.h ../corelib/io/qbuffer.h ../corelib/io/qdatastream.h ../corelib/io/qdebug.h ../corelib/io/qdir.h ../corelib/io/qdiriterator.h ../corelib/io/qfile.h ../corelib/io/qfileinfo.h ../corelib/io/qfilesystemwatcher.h ../corelib/io/qfsfileengine.h ../corelib/io/qiodevice.h ../corelib/io/qprocess.h ../corelib/io/qresource.h ../corelib/io/qsettings.h ../corelib/io/qtemporaryfile.h ../corelib/io/qtextstream.h ../corelib/io/qurl.h ../corelib/global/qconfig-dist.h ../corelib/global/qconfig-large.h ../corelib/global/qconfig-medium.h ../corelib/global/qconfig-minimal.h ../corelib/global/qconfig-nacl.h ../corelib/global/qconfig-small.h ../corelib/global/qendian.h ../corelib/global/qfeatures.h ../corelib/global/qglobal.h ../corelib/global/qlibraryinfo.h ../corelib/global/qnamespace.h ../corelib/global/qnumeric.h ../corelib/global/qt_windows.h ../corelib/global/qconfig.h ../corelib/codecs/qtextcodec.h ../corelib/codecs/qtextcodecplugin.h ../../include/QtCore/QtCore 
+++SYNCQT.HEADER_FILES = ../corelib/kernel/qabstracteventdispatcher.h ../corelib/kernel/qabstractitemmodel.h ../corelib/kernel/qbasictimer.h ../corelib/kernel/qcoreapplication.h ../corelib/kernel/qcoreevent.h ../corelib/kernel/qeventloop.h ../corelib/kernel/qfunctions_nacl.h ../corelib/kernel/qfunctions_vxworks.h ../corelib/kernel/qfunctions_wince.h ../corelib/kernel/qmath.h ../corelib/kernel/qmetaobject.h ../corelib/kernel/qmetatype.h ../corelib/kernel/qmimedata.h ../corelib/kernel/qobject.h ../corelib/kernel/qobjectcleanuphandler.h ../corelib/kernel/qobjectdefs.h ../corelib/kernel/qpointer.h ../corelib/kernel/qsharedmemory.h ../corelib/kernel/qsignalmapper.h ../corelib/kernel/qsocketnotifier.h ../corelib/kernel/qsystemsemaphore.h ../corelib/kernel/qtimer.h ../corelib/kernel/qtranslator.h ../corelib/kernel/qvariant.h ../corelib/animation/qabstractanimation.h ../corelib/animation/qanimationgroup.h ../corelib/animation/qparallelanimationgroup.h ../corelib/animation/qpauseanimation.h ../corelib/animation/qpropertyanimation.h ../corelib/animation/qsequentialanimationgroup.h ../corelib/animation/qvariantanimation.h ../corelib/arch/qatomic_aarch64.h ../corelib/arch/qatomic_alpha.h ../corelib/arch/qatomic_arch.h ../corelib/arch/qatomic_arm.h ../corelib/arch/qatomic_armv5.h ../corelib/arch/qatomic_armv6.h ../corelib/arch/qatomic_armv7.h ../corelib/arch/qatomic_avr32.h ../corelib/arch/qatomic_bfin.h ../corelib/arch/qatomic_bootstrap.h ../corelib/arch/qatomic_generic.h ../corelib/arch/qatomic_i386.h ../corelib/arch/qatomic_ia64.h ../corelib/arch/qatomic_integrity.h ../corelib/arch/qatomic_m68k.h ../corelib/arch/qatomic_macosx.h ../corelib/arch/qatomic_mips.h ../corelib/arch/qatomic_parisc.h ../corelib/arch/qatomic_powerpc.h ../corelib/arch/qatomic_s390.h ../corelib/arch/qatomic_sh.h ../corelib/arch/qatomic_sh4a.h ../corelib/arch/qatomic_sparc.h ../corelib/arch/qatomic_symbian.h ../corelib/arch/qatomic_vxworks.h ../corelib/arch/qatomic_windows.h ../corelib/arch/qatomic_windowsce.h ../corelib/arch/qatomic_x86_64.h ../corelib/tools/qalgorithms.h ../corelib/tools/qbitarray.h ../corelib/tools/qbytearray.h ../corelib/tools/qbytearraymatcher.h ../corelib/tools/qcache.h ../corelib/tools/qchar.h ../corelib/tools/qcontainerfwd.h ../corelib/tools/qcontiguouscache.h ../corelib/tools/qcryptographichash.h ../corelib/tools/qdatetime.h ../corelib/tools/qeasingcurve.h ../corelib/tools/qelapsedtimer.h ../corelib/tools/qhash.h ../corelib/tools/qiterator.h ../corelib/tools/qline.h ../corelib/tools/qlinkedlist.h ../corelib/tools/qlist.h ../corelib/tools/qlocale.h ../corelib/tools/qlocale_blackberry.h ../corelib/tools/qmap.h ../corelib/tools/qmargins.h ../corelib/tools/qpair.h ../corelib/tools/qpoint.h ../corelib/tools/qqueue.h ../corelib/tools/qrect.h ../corelib/tools/qregexp.h ../corelib/tools/qscopedpointer.h ../corelib/tools/qscopedvaluerollback.h ../corelib/tools/qset.h ../corelib/tools/qshareddata.h ../corelib/tools/qsharedpointer.h ../corelib/tools/qsharedpointer_impl.h ../corelib/tools/qsize.h ../corelib/tools/qstack.h ../corelib/tools/qstring.h ../corelib/tools/qstringbuilder.h ../corelib/tools/qstringlist.h ../corelib/tools/qstringmatcher.h ../corelib/tools/qtextboundaryfinder.h ../corelib/tools/qtimeline.h ../corelib/tools/qvarlengtharray.h ../corelib/tools/qvector.h ../corelib/plugin/qfactoryinterface.h ../corelib/plugin/qlibrary.h ../corelib/plugin/qplugin.h ../corelib/plugin/qpluginloader.h ../corelib/plugin/quuid.h ../corelib/xml/qxmlstream.h ../corelib/thread/qatomic.h ../corelib/thread/qbasicatomic.h ../corelib/thread/qmutex.h ../corelib/thread/qreadwritelock.h ../corelib/thread/qsemaphore.h ../corelib/thread/qthread.h ../corelib/thread/qthreadstorage.h ../corelib/thread/qwaitcondition.h ../corelib/statemachine/qabstractstate.h ../corelib/statemachine/qabstracttransition.h ../corelib/statemachine/qeventtransition.h ../corelib/statemachine/qfinalstate.h ../corelib/statemachine/qhistorystate.h ../corelib/statemachine/qsignaltransition.h ../corelib/statemachine/qstate.h ../corelib/statemachine/qstatemachine.h ../corelib/concurrent/qfuture.h ../corelib/concurrent/qfutureinterface.h ../corelib/concurrent/qfuturesynchronizer.h ../corelib/concurrent/qfuturewatcher.h ../corelib/concurrent/qrunnable.h ../corelib/concurrent/qtconcurrentcompilertest.h ../corelib/concurrent/qtconcurrentexception.h ../corelib/concurrent/qtconcurrentfilter.h ../corelib/concurrent/qtconcurrentfilterkernel.h ../corelib/concurrent/qtconcurrentfunctionwrappers.h ../corelib/concurrent/qtconcurrentiteratekernel.h ../corelib/concurrent/qtconcurrentmap.h ../corelib/concurrent/qtconcurrentmapkernel.h ../corelib/concurrent/qtconcurrentmedian.h ../corelib/concurrent/qtconcurrentreducekernel.h ../corelib/concurrent/qtconcurrentresultstore.h ../corelib/concurrent/qtconcurrentrun.h ../corelib/concurrent/qtconcurrentrunbase.h ../corelib/concurrent/qtconcurrentstoredfunctioncall.h ../corelib/concurrent/qtconcurrentthreadengine.h ../corelib/concurrent/qthreadpool.h ../corelib/io/qabstractfileengine.h ../corelib/io/qbuffer.h ../corelib/io/qdatastream.h ../corelib/io/qdebug.h ../corelib/io/qdir.h ../corelib/io/qdiriterator.h ../corelib/io/qfile.h ../corelib/io/qfileinfo.h ../corelib/io/qfilesystemwatcher.h ../corelib/io/qfsfileengine.h ../corelib/io/qiodevice.h ../corelib/io/qprocess.h ../corelib/io/qresource.h ../corelib/io/qsettings.h ../corelib/io/qtemporaryfile.h ../corelib/io/qtextstream.h ../corelib/io/qurl.h ../corelib/global/qconfig-dist.h ../corelib/global/qconfig-large.h ../corelib/global/qconfig-medium.h ../corelib/global/qconfig-minimal.h ../corelib/global/qconfig-nacl.h ../corelib/global/qconfig-small.h ../corelib/global/qendian.h ../corelib/global/qfeatures.h ../corelib/global/qglobal.h ../corelib/global/qlibraryinfo.h ../corelib/global/qnamespace.h ../corelib/global/qnumeric.h ../corelib/global/qt_windows.h ../corelib/global/qconfig.h ../corelib/codecs/qtextcodec.h ../corelib/codecs/qtextcodecplugin.h ../../include/QtCore/QtCore 
++ SYNCQT.HEADER_CLASSES = ../../include/QtCore/QAbstractEventDispatcher ../../include/QtCore/QModelIndex ../../include/QtCore/QPersistentModelIndex ../../include/QtCore/QModelIndexList ../../include/QtCore/QAbstractItemModel ../../include/QtCore/QAbstractTableModel ../../include/QtCore/QAbstractListModel ../../include/QtCore/QBasicTimer ../../include/QtCore/QCoreApplication ../../include/QtCore/QtCleanUpFunction ../../include/QtCore/QEvent ../../include/QtCore/QTimerEvent ../../include/QtCore/QChildEvent ../../include/QtCore/QCustomEvent ../../include/QtCore/QDynamicPropertyChangeEvent ../../include/QtCore/QEventLoop ../../include/QtCore/QMetaMethod ../../include/QtCore/QMetaEnum ../../include/QtCore/QMetaProperty ../../include/QtCore/QMetaClassInfo ../../include/QtCore/QMetaType ../../include/QtCore/QMetaTypeId ../../include/QtCore/QMetaTypeId2 ../../include/QtCore/QMimeData ../../include/QtCore/QObjectList ../../include/QtCore/QObjectData ../../include/QtCore/QObject ../../include/QtCore/QObjectUserData ../../include/QtCore/QObjectCleanupHandler ../../include/QtCore/QGenericArgument ../../include/QtCore/QGenericReturnArgument ../../include/QtCore/QArgument ../../include/QtCore/QReturnArgument ../../include/QtCore/QMetaObject ../../include/QtCore/QMetaObjectAccessor ../../include/QtCore/QMetaObjectExtraData ../../include/QtCore/QPointer ../../include/QtCore/QSharedMemory ../../include/QtCore/QSignalMapper ../../include/QtCore/QSocketNotifier ../../include/QtCore/QSystemSemaphore ../../include/QtCore/QTimer ../../include/QtCore/QTranslator ../../include/QtCore/QVariant ../../include/QtCore/QVariantList ../../include/QtCore/QVariantMap ../../include/QtCore/QVariantHash ../../include/QtCore/QVariantComparisonHelper ../../include/QtCore/QAbstractAnimation ../../include/QtCore/QAnimationDriver ../../include/QtCore/QAnimationGroup ../../include/QtCore/QParallelAnimationGroup ../../include/QtCore/QPauseAnimation ../../include/QtCore/QPropertyAnimation ../../include/QtCore/QSequentialAnimationGroup ../../include/QtCore/QVariantAnimation ../../include/QtCore/QtAlgorithms ../../include/QtCore/QBitArray ../../include/QtCore/QBitRef ../../include/QtCore/QByteArray ../../include/QtCore/QByteRef ../../include/QtCore/QByteArrayMatcher ../../include/QtCore/QCache ../../include/QtCore/QLatin1Char ../../include/QtCore/QChar ../../include/QtCore/QtContainerFwd ../../include/QtCore/QContiguousCacheData ../../include/QtCore/QContiguousCacheTypedData ../../include/QtCore/QContiguousCache ../../include/QtCore/QCryptographicHash ../../include/QtCore/QDate ../../include/QtCore/QTime ../../include/QtCore/QDateTime ../../include/QtCore/QEasingCurve ../../include/QtCore/QElapsedTimer ../../include/QtCore/QHashData ../../include/QtCore/QHashDummyValue ../../include/QtCore/QHashDummyNode ../../include/QtCore/QHashNode ../../include/QtCore/QHash ../../include/QtCore/QMultiHash ../../include/QtCore/QHashIterator ../../include/QtCore/QMutableHashIterator ../../include/QtCore/QLine ../../include/QtCore/QLineF ../../include/QtCore/QLinkedListData ../../include/QtCore/QLinkedListNode ../../include/QtCore/QLinkedList ../../include/QtCore/QLinkedListIterator ../../include/QtCore/QMutableLinkedListIterator ../../include/QtCore/QListData ../../include/QtCore/QList ../../include/QtCore/QListIterator ../../include/QtCore/QMutableListIterator ../../include/QtCore/QSystemLocale ../../include/QtCore/QLocale ../../include/QtCore/QBBSystemLocaleData ../../include/QtCore/QMapData ../../include/QtCore/QMapNode ../../include/QtCore/QMapPayloadNode ../../include/QtCore/QMap ../../include/QtCore/QMultiMap ../../include/QtCore/QMapIterator ../../include/QtCore/QMutableMapIterator ../../include/QtCore/QMargins ../../include/QtCore/QPair ../../include/QtCore/QPoint ../../include/QtCore/QPointF ../../include/QtCore/QQueue ../../include/QtCore/QRect ../../include/QtCore/QRectF ../../include/QtCore/QRegExp ../../include/QtCore/QScopedPointerDeleter ../../include/QtCore/QScopedPointerArrayDeleter ../../include/QtCore/QScopedPointerPodDeleter ../../include/QtCore/QScopedPointer ../../include/QtCore/QScopedArrayPointer ../../include/QtCore/QScopedValueRollback ../../include/QtCore/QSet ../../include/QtCore/QSetIterator ../../include/QtCore/QMutableSetIterator ../../include/QtCore/QSharedData ../../include/QtCore/QSharedDataPointer ../../include/QtCore/QExplicitlySharedDataPointer ../../include/QtCore/QSharedPointer ../../include/QtCore/QWeakPointer ../../include/QtCore/QSize ../../include/QtCore/QSizeF ../../include/QtCore/QStack ../../include/QtCore/QStdWString ../../include/QtCore/QString ../../include/QtCore/QLatin1String ../../include/QtCore/QCharRef ../../include/QtCore/QConstString ../../include/QtCore/QStringRef ../../include/QtCore/QLatin1Literal ../../include/QtCore/QAbstractConcatenable ../../include/QtCore/QConcatenable ../../include/QtCore/QStringBuilder ../../include/QtCore/QStringListIterator ../../include/QtCore/QMutableStringListIterator ../../include/QtCore/QStringList ../../include/QtCore/QStringMatcher ../../include/QtCore/QTextBoundaryFinder ../../include/QtCore/QTimeLine ../../include/QtCore/QVarLengthArray ../../include/QtCore/QVectorData ../../include/QtCore/QVectorTypedData ../../include/QtCore/QVector ../../include/QtCore/QVectorIterator ../../include/QtCore/QMutableVectorIterator ../../include/QtCore/QFactoryInterface ../../include/QtCore/QLibrary ../../include/QtCore/QtPlugin ../../include/QtCore/QtPluginInstanceFunction ../../include/QtCore/QPluginLoader ../../include/QtCore/QUuid ../../include/QtCore/QXmlStreamStringRef ../../include/QtCore/QXmlStreamAttribute ../../include/QtCore/QXmlStreamAttributes ../../include/QtCore/QXmlStreamNamespaceDeclaration ../../include/QtCore/QXmlStreamNamespaceDeclarations ../../include/QtCore/QXmlStreamNotationDeclaration ../../include/QtCore/QXmlStreamNotationDeclarations ../../include/QtCore/QXmlStreamEntityDeclaration ../../include/QtCore/QXmlStreamEntityDeclarations ../../include/QtCore/QXmlStreamEntityResolver ../../include/QtCore/QXmlStreamReader ../../include/QtCore/QXmlStreamWriter ../../include/QtCore/QAtomicInt ../../include/QtCore/QAtomicPointer ../../include/QtCore/QBasicAtomicInt ../../include/QtCore/QBasicAtomicPointer ../../include/QtCore/QMutex ../../include/QtCore/QMutexLocker ../../include/QtCore/QMutexData ../../include/QtCore/QReadWriteLock ../../include/QtCore/QReadLocker ../../include/QtCore/QWriteLocker ../../include/QtCore/QSemaphore ../../include/QtCore/QThread ../../include/QtCore/QThreadStorageData ../../include/QtCore/QThreadStorage ../../include/QtCore/QWaitCondition ../../include/QtCore/QAbstractState ../../include/QtCore/QAbstractTransition ../../include/QtCore/QEventTransition ../../include/QtCore/QFinalState ../../include/QtCore/QHistoryState ../../include/QtCore/QSignalTransition ../../include/QtCore/QState ../../include/QtCore/QStateMachine ../../include/QtCore/QFuture ../../include/QtCore/QFutureIterator ../../include/QtCore/QMutableFutureIterator ../../include/QtCore/QFutureInterfaceBase ../../include/QtCore/QFutureInterface ../../include/QtCore/QFutureSynchronizer ../../include/QtCore/QFutureWatcherBase ../../include/QtCore/QFutureWatcher ../../include/QtCore/QRunnable ../../include/QtCore/QtConcurrentFilter ../../include/QtCore/QtConcurrentMap ../../include/QtCore/QtConcurrentRun ../../include/QtCore/QThreadPool ../../include/QtCore/QAbstractFileEngine ../../include/QtCore/QAbstractFileEngineHandler ../../include/QtCore/QAbstractFileEngineIterator ../../include/QtCore/QBuffer ../../include/QtCore/QDataStream ../../include/QtCore/QtDebug ../../include/QtCore/QDebug ../../include/QtCore/QNoDebug ../../include/QtCore/QDir ../../include/QtCore/QDirIterator ../../include/QtCore/QFile ../../include/QtCore/QFileInfo ../../include/QtCore/QFileInfoList ../../include/QtCore/QFileInfoListIterator ../../include/QtCore/QFileSystemWatcher ../../include/QtCore/QFSFileEngine ../../include/QtCore/QIODevice ../../include/QtCore/Q_PID ../../include/QtCore/QProcessEnvironment ../../include/QtCore/QProcess ../../include/QtCore/QResource ../../include/QtCore/QSettings ../../include/QtCore/QTemporaryFile ../../include/QtCore/QTextStream ../../include/QtCore/QTextStreamFunction ../../include/QtCore/QTextStreamManipulator ../../include/QtCore/QTS ../../include/QtCore/QTextIStream ../../include/QtCore/QTextOStream ../../include/QtCore/QUrl ../../include/QtCore/QtEndian ../../include/QtCore/QtGlobal ../../include/QtCore/QIntegerForSize ../../include/QtCore/QNoImplicitBoolCast ../../include/QtCore/Q_INT8 ../../include/QtCore/Q_UINT8 ../../include/QtCore/Q_INT16 ../../include/QtCore/Q_UINT16 ../../include/QtCore/Q_INT32 ../../include/QtCore/Q_UINT32 ../../include/QtCore/Q_INT64 ../../include/QtCore/Q_UINT64 ../../include/QtCore/Q_LLONG ../../include/QtCore/Q_ULLONG ../../include/QtCore/Q_LONG ../../include/QtCore/Q_ULONG ../../include/QtCore/QSysInfo ../../include/QtCore/QtMsgHandler ../../include/QtCore/QGlobalStatic ../../include/QtCore/QGlobalStaticDeleter ../../include/QtCore/QBool ../../include/QtCore/QTypeInfo ../../include/QtCore/QFlag ../../include/QtCore/QIncompatibleFlag ../../include/QtCore/QFlags ../../include/QtCore/QForeachContainer ../../include/QtCore/QForeachContainerBase ../../include/QtCore/QLibraryInfo ../../include/QtCore/Qt ../../include/QtCore/QInternal ../../include/QtCore/QCOORD ../../include/QtCore/QtConfig ../../include/QtCore/QTextCodec ../../include/QtCore/QTextEncoder ../../include/QtCore/QTextDecoder ../../include/QtCore/QTextCodecFactoryInterface ../../include/QtCore/QTextCodecPlugin 
++ SYNCQT.PRIVATE_HEADER_FILES = ../corelib/kernel/qabstracteventdispatcher_p.h ../corelib/kernel/qabstractitemmodel_p.h ../corelib/kernel/qcore_mac_p.h ../corelib/kernel/qcore_symbian_p.h ../corelib/kernel/qcore_unix_p.h ../corelib/kernel/qcoreapplication_p.h ../corelib/kernel/qcorecmdlineargs_p.h ../corelib/kernel/qcoreglobaldata_p.h ../corelib/kernel/qcrashhandler_p.h ../corelib/kernel/qeventdispatcher_blackberry_p.h ../corelib/kernel/qeventdispatcher_glib_p.h ../corelib/kernel/qeventdispatcher_symbian_p.h ../corelib/kernel/qeventdispatcher_unix_p.h ../corelib/kernel/qeventdispatcher_win_p.h ../corelib/kernel/qfunctions_p.h ../corelib/kernel/qmetaobject_p.h ../corelib/kernel/qobject_p.h ../corelib/kernel/qsharedmemory_p.h ../corelib/kernel/qsystemerror_p.h ../corelib/kernel/qsystemsemaphore_p.h ../corelib/kernel/qtranslator_p.h ../corelib/kernel/qvariant_p.h ../corelib/kernel/qwineventnotifier_p.h ../corelib/animation/qabstractanimation_p.h ../corelib/animation/qanimationgroup_p.h ../corelib/animation/qparallelanimationgroup_p.h ../corelib/animation/qpropertyanimation_p.h ../corelib/animation/qsequentialanimationgroup_p.h ../corelib/animation/qvariantanimation_p.h ../corelib/tools/qbytedata_p.h ../corelib/tools/qdatetime_p.h ../corelib/tools/qharfbuzz_p.h ../corelib/tools/qlocale_data_p.h ../corelib/tools/qlocale_p.h ../corelib/tools/qlocale_tools_p.h ../corelib/tools/qpodlist_p.h ../corelib/tools/qringbuffer_p.h ../corelib/tools/qscopedpointer_p.h ../corelib/tools/qsimd_p.h ../corelib/tools/qtools_p.h ../corelib/tools/qunicodetables_p.h ../corelib/plugin/qelfparser_p.h ../corelib/plugin/qfactoryloader_p.h ../corelib/plugin/qlibrary_p.h ../corelib/plugin/qsystemlibrary_p.h ../corelib/xml/qxmlstream_p.h ../corelib/xml/qxmlutils_p.h ../corelib/thread/qmutex_p.h ../corelib/thread/qmutexpool_p.h ../corelib/thread/qorderedmutexlocker_p.h ../corelib/thread/qreadwritelock_p.h ../corelib/thread/qthread_p.h ../corelib/statemachine/qabstractstate_p.h ../corelib/statemachine/qabstracttransition_p.h ../corelib/statemachine/qeventtransition_p.h ../corelib/statemachine/qhistorystate_p.h ../corelib/statemachine/qsignaleventgenerator_p.h ../corelib/statemachine/qsignaltransition_p.h ../corelib/statemachine/qstate_p.h ../corelib/statemachine/qstatemachine_p.h ../corelib/concurrent/qfutureinterface_p.h ../corelib/concurrent/qfuturewatcher_p.h ../corelib/concurrent/qthreadpool_p.h ../corelib/io/qabstractfileengine_p.h ../corelib/io/qdatastream_p.h ../corelib/io/qdataurl_p.h ../corelib/io/qdir_p.h ../corelib/io/qfile_p.h ../corelib/io/qfileinfo_p.h ../corelib/io/qfilesystemengine_p.h ../corelib/io/qfilesystementry_p.h ../corelib/io/qfilesystemiterator_p.h ../corelib/io/qfilesystemmetadata_p.h ../corelib/io/qfilesystemwatcher_dnotify_p.h ../corelib/io/qfilesystemwatcher_fsevents_p.h ../corelib/io/qfilesystemwatcher_inotify_p.h ../corelib/io/qfilesystemwatcher_kqueue_p.h ../corelib/io/qfilesystemwatcher_p.h ../corelib/io/qfilesystemwatcher_symbian_p.h ../corelib/io/qfilesystemwatcher_win_p.h ../corelib/io/qfsfileengine_iterator_p.h ../corelib/io/qfsfileengine_p.h ../corelib/io/qiodevice_p.h ../corelib/io/qnoncontiguousbytedevice_p.h ../corelib/io/qprocess_p.h ../corelib/io/qresource_iterator_p.h ../corelib/io/qresource_p.h ../corelib/io/qsettings_p.h ../corelib/io/qtldurl_p.h ../corelib/io/qurltlds_p.h ../corelib/io/qwindowspipewriter_p.h ../corelib/global/qnumeric_p.h ../corelib/global/qt_pch.h ../corelib/codecs/qfontlaocodec_p.h ../corelib/codecs/qiconvcodec_p.h ../corelib/codecs/qisciicodec_p.h ../corelib/codecs/qlatincodec_p.h ../corelib/codecs/qsimplecodec_p.h ../corelib/codecs/qtextcodec_p.h ../corelib/codecs/qtsciicodec_p.h ../corelib/codecs/qutfcodec_p.h 
++diff -up qt-everywhere-opensource-src-4.8.7/include/QtCore/qatomic_aarch64.h.aarch64 qt-everywhere-opensource-src-4.8.7/include/QtCore/qatomic_aarch64.h
++--- qt-everywhere-opensource-src-4.8.7/include/QtCore/qatomic_aarch64.h.aarch64	2015-05-08 21:48:32.715057744 -0500
+++++ qt-everywhere-opensource-src-4.8.7/include/QtCore/qatomic_aarch64.h	2015-05-08 21:48:32.715057744 -0500
++@@ -0,0 +1 @@
+++#include "../../src/corelib/arch/qatomic_aarch64.h"
++diff -up qt-everywhere-opensource-src-4.8.7/src/3rdparty/javascriptcore/JavaScriptCore/JavaScriptCore.pri.aarch64 qt-everywhere-opensource-src-4.8.7/src/3rdparty/javascriptcore/JavaScriptCore/JavaScriptCore.pri
++--- qt-everywhere-opensource-src-4.8.7/src/3rdparty/javascriptcore/JavaScriptCore/JavaScriptCore.pri.aarch64	2015-05-07 09:14:47.000000000 -0500
+++++ qt-everywhere-opensource-src-4.8.7/src/3rdparty/javascriptcore/JavaScriptCore/JavaScriptCore.pri	2015-05-08 21:48:33.268061013 -0500
++@@ -66,6 +66,12 @@ contains(JAVASCRIPTCORE_JIT,no) {
++     }
++ }
++ 
+++# Hack around AARCH64 fail wrt JSValue.h
+++equals(QT_ARCH, aarch64) {
+++    message("JavaScriptCore aarch64 hack: -fpermissive")
+++    QMAKE_CXXFLAGS += -fpermissive
+++}
+++
++ wince* {
++     INCLUDEPATH += $$QT_SOURCE_TREE/src/3rdparty/ce-compat
++     SOURCES += $$QT_SOURCE_TREE/src/3rdparty/ce-compat/ce_time.c
++diff -up qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/JavaScriptCore/JavaScriptCore.pri.aarch64 qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/JavaScriptCore/JavaScriptCore.pri
++--- qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/JavaScriptCore/JavaScriptCore.pri.aarch64	2015-05-07 09:14:45.000000000 -0500
+++++ qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/JavaScriptCore/JavaScriptCore.pri	2015-05-08 21:48:33.268061013 -0500
++@@ -63,6 +63,12 @@ contains (CONFIG, text_breaking_with_icu
++     DEFINES += WTF_USE_QT_ICU_TEXT_BREAKING=1
++ }
++ 
+++# Hack around AARCH64 fail wrt JSValue.h
+++equals(QT_ARCH, aarch64) {
+++    message("JavaScriptCore aarch64 hack: -fpermissive")
+++    QMAKE_CXXFLAGS += -fpermissive
+++}
+++
++ wince* {
++     INCLUDEPATH += $$QT_SOURCE_TREE/src/3rdparty/ce-compat
++     INCLUDEPATH += $$PWD/../JavaScriptCore/os-win32
++diff -up qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/JavaScriptCore/wtf/Platform.h.aarch64 qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/JavaScriptCore/wtf/Platform.h
++--- qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/JavaScriptCore/wtf/Platform.h.aarch64	2015-05-07 09:14:45.000000000 -0500
+++++ qt-everywhere-opensource-src-4.8.7/src/3rdparty/webkit/Source/JavaScriptCore/wtf/Platform.h	2015-05-08 21:48:33.269061019 -0500
++@@ -369,7 +369,16 @@
++ 
++ #endif /* ARM */
++ 
++-#if CPU(ARM) || CPU(MIPS) || CPU(SH4)
+++/* CPU(AARCH64) - AArch64 */
+++#if defined(__aarch64__)
+++#define WTF_CPU_AARCH64 1
+++#if defined(__AARCH64EB__)
+++#define WTF_CPU_BIG_ENDIAN 1
+++#endif
+++#endif
+++
+++/* Not sure about this one, qt5-qtwebkit doesn't include it -- rex */
+++#if CPU(ARM) || CPU(MIPS) || CPU(SH4) || CPU(AARCH64)
++ #define WTF_CPU_NEEDS_ALIGNED_ACCESS 1
++ #endif
++ 
++@@ -1003,7 +1012,7 @@
++     || CPU(SPARC64) \
++     || CPU(S390X) \
++     || CPU(PPC64) \
++-    || CPU(MIPS64)
+++    || CPU(MIPS64) || CPU(AARCH64)
++ #define WTF_USE_JSVALUE64 1
++ #else
++ #define WTF_USE_JSVALUE32_64 1
++diff -up qt-everywhere-opensource-src-4.8.7/src/corelib/arch/aarch64/qatomic_aarch64.cpp.aarch64 qt-everywhere-opensource-src-4.8.7/src/corelib/arch/aarch64/qatomic_aarch64.cpp
++--- qt-everywhere-opensource-src-4.8.7/src/corelib/arch/aarch64/qatomic_aarch64.cpp.aarch64	2015-05-08 21:48:33.269061019 -0500
+++++ qt-everywhere-opensource-src-4.8.7/src/corelib/arch/aarch64/qatomic_aarch64.cpp	2015-05-08 21:48:33.269061019 -0500
++@@ -0,0 +1,70 @@
+++/****************************************************************************
+++**
+++** Copyright (C) 2012, 2013 Digia Plc and/or its subsidiary(-ies).
+++** Contact: http://www.qt-project.org/legal
+++**
+++** This file is part of the QtCore module of the Qt Toolkit.
+++**
+++** $QT_BEGIN_LICENSE:LGPL$
+++** Commercial License Usage
+++** Licensees holding valid commercial Qt licenses may use this file in
+++** accordance with the commercial license agreement provided with the
+++** Software or, alternatively, in accordance with the terms contained in
+++** a written agreement between you and Digia.  For licensing terms and
+++** conditions see http://qt.digia.com/licensing.  For further information
+++** use the contact form at http://qt.digia.com/contact-us.
+++**
+++** GNU Lesser General Public License Usage
+++** Alternatively, this file may be used under the terms of the GNU Lesser
+++** General Public License version 2.1 as published by the Free Software
+++** Foundation and appearing in the file LICENSE.LGPL included in the
+++** packaging of this file.  Please review the following information to
+++** ensure the GNU Lesser General Public License version 2.1 requirements
+++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+++**
+++** In addition, as a special exception, Digia gives you certain additional
+++** rights.  These rights are described in the Digia Qt LGPL Exception
+++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+++**
+++** GNU General Public License Usage
+++** Alternatively, this file may be used under the terms of the GNU
+++** General Public License version 3.0 as published by the Free Software
+++** Foundation and appearing in the file LICENSE.GPL included in the
+++** packaging of this file.  Please review the following information to
+++** ensure the GNU General Public License version 3.0 requirements will be
+++** met: http://www.gnu.org/copyleft/gpl.html.
+++**
+++**
+++** $QT_END_LICENSE$
+++**
+++****************************************************************************/
+++
+++#include <QtCore/qglobal.h>
+++
+++#include <unistd.h>
+++#ifdef _POSIX_PRIORITY_SCHEDULING
+++# include <sched.h>
+++#endif
+++#include <time.h>
+++
+++QT_BEGIN_NAMESPACE
+++
+++QT_USE_NAMESPACE
+++
+++Q_CORE_EXPORT void qt_atomic_yield(int *count)
+++{
+++#ifdef _POSIX_PRIORITY_SCHEDULING
+++    if((*count)++ < 50) {
+++        sched_yield();
+++    } else
+++#endif
+++    {
+++        struct timespec tm;
+++        tm.tv_sec = 0;
+++        tm.tv_nsec = 2000001;
+++        nanosleep(&tm, NULL);
+++        *count = 0;
+++    }
+++}
+++
+++QT_END_NAMESPACE
++diff -up qt-everywhere-opensource-src-4.8.7/src/corelib/arch/arch.pri.aarch64 qt-everywhere-opensource-src-4.8.7/src/corelib/arch/arch.pri
++--- qt-everywhere-opensource-src-4.8.7/src/corelib/arch/arch.pri.aarch64	2015-05-07 09:14:48.000000000 -0500
+++++ qt-everywhere-opensource-src-4.8.7/src/corelib/arch/arch.pri	2015-05-08 21:48:33.270061025 -0500
++@@ -31,7 +31,9 @@ integrity:HEADERS += arch/qatomic_integr
++                        arch/qatomic_s390.h \
++                        arch/qatomic_x86_64.h \
++                        arch/qatomic_sh.h \
++-                       arch/qatomic_sh4a.h
+++                       arch/qatomic_sh4a.h \
+++                       arch/qatomic_aarch64.h \
+++
++ 
++ QT_ARCH_CPP = $$QT_SOURCE_TREE/src/corelib/arch/$$QT_ARCH
++ DEPENDPATH += $$QT_ARCH_CPP
++diff -up qt-everywhere-opensource-src-4.8.7/src/corelib/arch/qatomic_aarch64.h.aarch64 qt-everywhere-opensource-src-4.8.7/src/corelib/arch/qatomic_aarch64.h
++--- qt-everywhere-opensource-src-4.8.7/src/corelib/arch/qatomic_aarch64.h.aarch64	2015-05-08 21:48:33.270061025 -0500
+++++ qt-everywhere-opensource-src-4.8.7/src/corelib/arch/qatomic_aarch64.h	2015-05-08 21:48:33.270061025 -0500
++@@ -0,0 +1,335 @@
+++/****************************************************************************
+++**
+++** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
+++** Contact: http://www.qt-project.org/legal
+++**
+++** This file is part of the QtCore module of the Qt Toolkit.
+++**
+++** $QT_BEGIN_LICENSE:LGPL$
+++** Commercial License Usage
+++** Licensees holding valid commercial Qt licenses may use this file in
+++** accordance with the commercial license agreement provided with the
+++** Software or, alternatively, in accordance with the terms contained in
+++** a written agreement between you and Digia.  For licensing terms and
+++** conditions see http://qt.digia.com/licensing.  For further information
+++** use the contact form at http://qt.digia.com/contact-us.
+++**
+++** GNU Lesser General Public License Usage
+++** Alternatively, this file may be used under the terms of the GNU Lesser
+++** General Public License version 2.1 as published by the Free Software
+++** Foundation and appearing in the file LICENSE.LGPL included in the
+++** packaging of this file.  Please review the following information to
+++** ensure the GNU Lesser General Public License version 2.1 requirements
+++** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+++**
+++** In addition, as a special exception, Digia gives you certain additional
+++** rights.  These rights are described in the Digia Qt LGPL Exception
+++** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+++**
+++** GNU General Public License Usage
+++** Alternatively, this file may be used under the terms of the GNU
+++** General Public License version 3.0 as published by the Free Software
+++** Foundation and appearing in the file LICENSE.GPL included in the
+++** packaging of this file.  Please review the following information to
+++** ensure the GNU General Public License version 3.0 requirements will be
+++** met: http://www.gnu.org/copyleft/gpl.html.
+++**
+++**
+++** $QT_END_LICENSE$
+++**
+++****************************************************************************/
+++
+++#ifndef QATOMIC_AARCH64_H
+++#define QATOMIC_AARCH64_H
+++
+++QT_BEGIN_HEADER
+++
+++QT_BEGIN_NAMESPACE
+++
+++#define Q_ATOMIC_INT_REFERENCE_COUNTING_IS_ALWAYS_NATIVE
+++
+++inline bool QBasicAtomicInt::isReferenceCountingNative()
+++{ return true; }
+++inline bool QBasicAtomicInt::isReferenceCountingWaitFree()
+++{ return false; }
+++
+++#define Q_ATOMIC_INT_TEST_AND_SET_IS_ALWAYS_NATIVE
+++
+++inline bool QBasicAtomicInt::isTestAndSetNative()
+++{ return true; }
+++inline bool QBasicAtomicInt::isTestAndSetWaitFree()
+++{ return false; }
+++
+++#define Q_ATOMIC_INT_FETCH_AND_STORE_IS_ALWAYS_NATIVE
+++
+++inline bool QBasicAtomicInt::isFetchAndStoreNative()
+++{ return true; }
+++inline bool QBasicAtomicInt::isFetchAndStoreWaitFree()
+++{ return false; }
+++
+++#define Q_ATOMIC_INT_FETCH_AND_ADD_IS_ALWAYS_NATIVE
+++
+++inline bool QBasicAtomicInt::isFetchAndAddNative()
+++{ return true; }
+++inline bool QBasicAtomicInt::isFetchAndAddWaitFree()
+++{ return false; }
+++
+++#define Q_ATOMIC_POINTER_TEST_AND_SET_IS_ALWAYS_NATIVE
+++
+++template <typename T>
+++Q_INLINE_TEMPLATE bool QBasicAtomicPointer<T>::isTestAndSetNative()
+++{ return true; }
+++template <typename T>
+++Q_INLINE_TEMPLATE bool QBasicAtomicPointer<T>::isTestAndSetWaitFree()
+++{ return false; }
+++
+++#define Q_ATOMIC_POINTER_FETCH_AND_STORE_IS_ALWAYS_NATIVE
+++
+++template <typename T>
+++Q_INLINE_TEMPLATE bool QBasicAtomicPointer<T>::isFetchAndStoreNative()
+++{ return true; }
+++template <typename T>
+++Q_INLINE_TEMPLATE bool QBasicAtomicPointer<T>::isFetchAndStoreWaitFree()
+++{ return false; }
+++
+++#define Q_ATOMIC_POINTER_FETCH_AND_ADD_IS_ALWAYS_NATIVE
+++
+++template <typename T>
+++Q_INLINE_TEMPLATE bool QBasicAtomicPointer<T>::isFetchAndAddNative()
+++{ return true; }
+++template <typename T>
+++Q_INLINE_TEMPLATE bool QBasicAtomicPointer<T>::isFetchAndAddWaitFree()
+++{ return false; }
+++
+++#ifndef Q_DATA_MEMORY_BARRIER
+++# define Q_DATA_MEMORY_BARRIER asm volatile("dmb sy\n":::"memory")
+++#endif
+++#ifndef Q_COMPILER_MEMORY_BARRIER
+++# define Q_COMPILER_MEMORY_BARRIER asm volatile("":::"memory")
+++#endif
+++
+++inline bool QBasicAtomicInt::ref()
+++{
+++    int newValue;
+++
+++    Q_COMPILER_MEMORY_BARRIER;
+++    newValue = __atomic_add_fetch(&_q_value, 1, __ATOMIC_ACQ_REL);
+++    Q_COMPILER_MEMORY_BARRIER;
+++
+++    return newValue != 0;
+++}
+++
+++inline bool QBasicAtomicInt::deref()
+++{
+++    int newValue;
+++
+++    Q_COMPILER_MEMORY_BARRIER;
+++    newValue = __atomic_sub_fetch(&_q_value, 1, __ATOMIC_ACQ_REL);
+++    Q_COMPILER_MEMORY_BARRIER;
+++
+++    return newValue != 0;
+++}
+++
+++inline bool QBasicAtomicInt::testAndSetRelaxed(int expectedValue, int newValue)
+++{
+++    bool val;
+++
+++    Q_COMPILER_MEMORY_BARRIER;
+++    val =  __atomic_compare_exchange_n (&_q_value, &expectedValue, newValue,
+++					false, __ATOMIC_RELAXED, __ATOMIC_RELAXED);
+++    Q_COMPILER_MEMORY_BARRIER;
+++    return val;
+++}
+++
+++inline int QBasicAtomicInt::fetchAndStoreRelaxed(int newValue)
+++{
+++    int val;
+++    Q_COMPILER_MEMORY_BARRIER;
+++    val = __atomic_exchange_n(&_q_value, newValue, __ATOMIC_RELAXED);
+++    Q_COMPILER_MEMORY_BARRIER;
+++    return val;
+++}
+++
+++inline int QBasicAtomicInt::fetchAndAddRelaxed(int valueToAdd)
+++{
+++    int val;
+++    Q_COMPILER_MEMORY_BARRIER;
+++    val = __atomic_fetch_add(&_q_value, valueToAdd, __ATOMIC_RELAXED);
+++    Q_COMPILER_MEMORY_BARRIER;
+++    return val;
+++}
+++
+++template <typename T>
+++Q_INLINE_TEMPLATE bool QBasicAtomicPointer<T>::testAndSetRelaxed(T *expectedValue, T *newValue)
+++{
+++    bool val;
+++    Q_COMPILER_MEMORY_BARRIER;
+++    val =  __atomic_compare_exchange_n (&_q_value, &expectedValue, newValue,
+++					false, __ATOMIC_RELAXED, __ATOMIC_RELAXED);
+++    Q_COMPILER_MEMORY_BARRIER;
+++    return val;
+++}
+++
+++template <typename T>
+++Q_INLINE_TEMPLATE T *QBasicAtomicPointer<T>::fetchAndStoreRelaxed(T *newValue)
+++{
+++    T *val;
+++    Q_COMPILER_MEMORY_BARRIER;
+++    val = __atomic_exchange_n(&_q_value, newValue, __ATOMIC_RELAXED);
+++    Q_COMPILER_MEMORY_BARRIER;
+++    return val;
+++}
+++
+++template <typename T>
+++Q_INLINE_TEMPLATE T *QBasicAtomicPointer<T>::fetchAndAddRelaxed(qptrdiff valueToAdd)
+++{
+++    T *val;
+++    Q_COMPILER_MEMORY_BARRIER;
+++    val = __atomic_fetch_add(&_q_value, valueToAdd, __ATOMIC_RELAXED);
+++    Q_COMPILER_MEMORY_BARRIER;
+++    return val;
+++}
+++
+++inline bool QBasicAtomicInt::testAndSetAcquire(int expectedValue, int newValue)
+++{
+++    bool returnValue = testAndSetRelaxed(expectedValue, newValue);
+++    Q_DATA_MEMORY_BARRIER;
+++    return returnValue;
+++}
+++
+++inline bool QBasicAtomicInt::testAndSetRelease(int expectedValue, int newValue)
+++{
+++    Q_DATA_MEMORY_BARRIER;
+++    return testAndSetRelaxed(expectedValue, newValue);
+++}
+++
+++inline bool QBasicAtomicInt::testAndSetOrdered(int expectedValue, int newValue)
+++{
+++    Q_DATA_MEMORY_BARRIER;
+++    bool returnValue = testAndSetRelaxed(expectedValue, newValue);
+++    Q_COMPILER_MEMORY_BARRIER;
+++    return returnValue;
+++}
+++
+++inline int QBasicAtomicInt::fetchAndStoreAcquire(int newValue)
+++{
+++    int returnValue = fetchAndStoreRelaxed(newValue);
+++    Q_DATA_MEMORY_BARRIER;
+++    return returnValue;
+++}
+++
+++inline int QBasicAtomicInt::fetchAndStoreRelease(int newValue)
+++{
+++    Q_DATA_MEMORY_BARRIER;
+++    return fetchAndStoreRelaxed(newValue);
+++}
+++
+++inline int QBasicAtomicInt::fetchAndStoreOrdered(int newValue)
+++{
+++    Q_DATA_MEMORY_BARRIER;
+++    int returnValue = fetchAndStoreRelaxed(newValue);
+++    Q_COMPILER_MEMORY_BARRIER;
+++    return returnValue;
+++}
+++
+++inline int QBasicAtomicInt::fetchAndAddAcquire(int valueToAdd)
+++{
+++    int returnValue = fetchAndAddRelaxed(valueToAdd);
+++    Q_DATA_MEMORY_BARRIER;
+++    return returnValue;
+++}
+++
+++inline int QBasicAtomicInt::fetchAndAddRelease(int valueToAdd)
+++{
+++    Q_DATA_MEMORY_BARRIER;
+++    return fetchAndAddRelaxed(valueToAdd);
+++}
+++
+++inline int QBasicAtomicInt::fetchAndAddOrdered(int valueToAdd)
+++{
+++    Q_DATA_MEMORY_BARRIER;
+++    int returnValue = fetchAndAddRelaxed(valueToAdd);
+++    Q_COMPILER_MEMORY_BARRIER;
+++    return returnValue;
+++}
+++
+++template <typename T>
+++Q_INLINE_TEMPLATE bool QBasicAtomicPointer<T>::testAndSetAcquire(T *expectedValue, T *newValue)
+++{
+++    bool returnValue = testAndSetRelaxed(expectedValue, newValue);
+++    Q_DATA_MEMORY_BARRIER;
+++    return returnValue;
+++}
+++
+++template <typename T>
+++Q_INLINE_TEMPLATE bool QBasicAtomicPointer<T>::testAndSetRelease(T *expectedValue, T *newValue)
+++{
+++    Q_DATA_MEMORY_BARRIER;
+++    return testAndSetRelaxed(expectedValue, newValue);
+++}
+++
+++template <typename T>
+++Q_INLINE_TEMPLATE bool QBasicAtomicPointer<T>::testAndSetOrdered(T *expectedValue, T *newValue)
+++{
+++    Q_DATA_MEMORY_BARRIER;
+++    bool returnValue = testAndSetAcquire(expectedValue, newValue);
+++    Q_COMPILER_MEMORY_BARRIER;
+++    return returnValue;
+++}
+++
+++template <typename T>
+++Q_INLINE_TEMPLATE T *QBasicAtomicPointer<T>::fetchAndStoreAcquire(T *newValue)
+++{
+++    T *returnValue = fetchAndStoreRelaxed(newValue);
+++    Q_DATA_MEMORY_BARRIER;
+++    return returnValue;
+++}
+++
+++template <typename T>
+++Q_INLINE_TEMPLATE T *QBasicAtomicPointer<T>::fetchAndStoreRelease(T *newValue)
+++{
+++    Q_DATA_MEMORY_BARRIER;
+++    return fetchAndStoreRelaxed(newValue);
+++}
+++
+++template <typename T>
+++Q_INLINE_TEMPLATE T *QBasicAtomicPointer<T>::fetchAndStoreOrdered(T *newValue)
+++{
+++    Q_DATA_MEMORY_BARRIER;
+++    T *returnValue = fetchAndStoreRelaxed(newValue);
+++    Q_COMPILER_MEMORY_BARRIER;
+++    return returnValue;
+++}
+++
+++template <typename T>
+++Q_INLINE_TEMPLATE T *QBasicAtomicPointer<T>::fetchAndAddAcquire(qptrdiff valueToAdd)
+++{
+++    T *returnValue = fetchAndAddRelaxed(valueToAdd);
+++    Q_DATA_MEMORY_BARRIER;
+++    return returnValue;
+++}
+++
+++template <typename T>
+++Q_INLINE_TEMPLATE T *QBasicAtomicPointer<T>::fetchAndAddRelease(qptrdiff valueToAdd)
+++{
+++    Q_DATA_MEMORY_BARRIER;
+++    return fetchAndAddRelaxed(valueToAdd);
+++}
+++
+++template <typename T>
+++Q_INLINE_TEMPLATE T *QBasicAtomicPointer<T>::fetchAndAddOrdered(qptrdiff valueToAdd)
+++{
+++    Q_DATA_MEMORY_BARRIER;
+++    T *returnValue = fetchAndAddRelaxed(valueToAdd);
+++    Q_COMPILER_MEMORY_BARRIER;
+++    return returnValue;
+++}
+++
+++#undef Q_DATA_MEMORY_BARRIER
+++#undef Q_COMPILER_MEMORY_BARRIER
+++
+++QT_END_NAMESPACE
+++
+++QT_END_HEADER
+++
+++#endif // QATOMIC_AARCH64_H
++diff -up qt-everywhere-opensource-src-4.8.7/src/corelib/arch/qatomic_arch.h.aarch64 qt-everywhere-opensource-src-4.8.7/src/corelib/arch/qatomic_arch.h
++--- qt-everywhere-opensource-src-4.8.7/src/corelib/arch/qatomic_arch.h.aarch64	2015-05-07 09:14:48.000000000 -0500
+++++ qt-everywhere-opensource-src-4.8.7/src/corelib/arch/qatomic_arch.h	2015-05-08 21:48:33.271061031 -0500
++@@ -94,6 +94,8 @@ QT_BEGIN_HEADER
++ #  include "QtCore/qatomic_sh4a.h"
++ #elif defined(QT_ARCH_NACL)
++ #  include "QtCore/qatomic_generic.h"
+++#elif defined(QT_ARCH_AARCH64)
+++#  include "QtCore/qatomic_aarch64.h"
++ #else
++ #  error "Qt has not been ported to this architecture"
++ #endif
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/smpeg/smpeg-0.4.5.json fwupd-1.8.6/contrib/flatpak/shared-modules/smpeg/smpeg-0.4.5.json
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/smpeg/smpeg-0.4.5.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/smpeg/smpeg-0.4.5.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,39 @@
++{
++    "name": "smpeg",
++    "config-opts": ["--disable-static"],
++    "cleanup": [
++        "/bin",
++        "/man"
++    ],
++    "rm-configure": true,
++    "sources": [
++        {
++            "type": "archive",
++            "url": "http://http.debian.net/debian/pool/main/s/smpeg/smpeg_0.4.5+cvs20030824.orig.tar.gz",
++            "sha256": "1276ea797dd9fde8a12dd3f33f180153922544c28ca9fc7b477c018876be1916"
++        },
++        {
++            "type": "script",
++            "dest-filename": "autogen.sh",
++            "commands": [
++                "AUTOMAKE=\"automake --foreign --add-missing --force-missing\" autoreconf -vfi"
++            ]
++        },
++        {
++            "type": "patch",
++            "path": "smpeg-am-prog-as.patch"
++        },
++        {
++            "type": "patch",
++            "path": "smpeg-export-mpegaudio-class.patch"
++        },
++        {
++            "type": "patch",
++            "path": "smpeg-no-gtk.patch"
++        },
++        {
++            "type": "patch",
++            "path": "smpeg-gcc6.patch"
++        }
++    ]
++}
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/smpeg/smpeg-am-prog-as.patch fwupd-1.8.6/contrib/flatpak/shared-modules/smpeg/smpeg-am-prog-as.patch
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/smpeg/smpeg-am-prog-as.patch	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/smpeg/smpeg-am-prog-as.patch	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,12 @@
++Index: smpeg-0.4.5+cvs20030824/configure.in
++===================================================================
++--- smpeg-0.4.5+cvs20030824.orig/configure.in
+++++ smpeg-0.4.5+cvs20030824/configure.in
++@@ -57,6 +57,7 @@
++ AC_LIBTOOL_WIN32_DLL
++ AM_PROG_LIBTOOL
++ AC_PROG_INSTALL
+++AM_PROG_AS
++ 
++ dnl Ugh.
++ AS="$CC"
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/smpeg/smpeg-export-mpegaudio-class.patch fwupd-1.8.6/contrib/flatpak/shared-modules/smpeg/smpeg-export-mpegaudio-class.patch
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/smpeg/smpeg-export-mpegaudio-class.patch	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/smpeg/smpeg-export-mpegaudio-class.patch	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,17 @@
++--- smpeg-0.4.5+cvs20030824.orig/MPEGaudio.h
+++++ smpeg-0.4.5+cvs20030824/MPEGaudio.h
++@@ -149,6 +149,14 @@
++ };
++ 
++ /* The actual MPEG audio class */
+++
+++class MPEGaudio;
+++void Play_MPEGaudioSDL(void *udata, Uint8 *stream, int len);
+++int Play_MPEGaudio(MPEGaudio *audio, Uint8 *stream, int len);
+++#ifdef THREADED_AUDIO
+++int Decode_MPEGaudio(void *udata);
+++#endif
+++
++ class MPEGaudio : public MPEGerror, public MPEGaudioaction {
++ 
++     friend void Play_MPEGaudioSDL(void *udata, Uint8 *stream, int len);
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/smpeg/smpeg-gcc6.patch fwupd-1.8.6/contrib/flatpak/shared-modules/smpeg/smpeg-gcc6.patch
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/smpeg/smpeg-gcc6.patch	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/smpeg/smpeg-gcc6.patch	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,40 @@
++Description: Fix compiling with GCC 6.
++Author: Johannes Brandstätter <jbrandst@2ds.eu>
++Bug-Debian: https://bugs.debian.org/811742
++Last-Update: <2016-09-24>
++
++Index: smpeg-0.4.5+cvs20030824/audio/huffmantable.cpp
++===================================================================
++--- smpeg-0.4.5+cvs20030824.orig/audio/huffmantable.cpp
+++++ smpeg-0.4.5+cvs20030824/audio/huffmantable.cpp
++@@ -9,6 +9,7 @@
++ #include "config.h"
++ #endif
++ 
+++#include <climits>
++ #include "MPEGaudio.h"
++ 
++ static const unsigned int
++@@ -550,11 +551,11 @@ htd33[ 31][2]={{ 16,  1},{  8,  1},{  4,
++ 
++ const HUFFMANCODETABLE MPEGaudio::ht[HTN]=
++ {
++-  { 0, 0-1, 0-1, 0,  0, htd33},
+++  { 0, UINT_MAX, UINT_MAX, 0,  0, htd33},
++   { 1, 2-1, 2-1, 0,  7,htd01},
++   { 2, 3-1, 3-1, 0, 17,htd02},
++   { 3, 3-1, 3-1, 0, 17,htd03},
++-  { 4, 0-1, 0-1, 0,  0, htd33},
+++  { 4, UINT_MAX, UINT_MAX, 0,  0, htd33},
++   { 5, 4-1, 4-1, 0, 31,htd05},
++   { 6, 4-1, 4-1, 0, 31,htd06},
++   { 7, 6-1, 6-1, 0, 71,htd07},
++@@ -564,7 +565,7 @@ const HUFFMANCODETABLE MPEGaudio::ht[HTN
++   {11, 8-1, 8-1, 0,127,htd11},
++   {12, 8-1, 8-1, 0,127,htd12},
++   {13,16-1,16-1, 0,511,htd13},
++-  {14, 0-1, 0-1, 0,  0, htd33},
+++  {14, UINT_MAX, UINT_MAX, 0,  0, htd33},
++   {15,16-1,16-1, 0,511,htd15},
++   {16,16-1,16-1, 1,511,htd16},
++   {17,16-1,16-1, 2,511,htd16},
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/smpeg/smpeg-no-gtk.patch fwupd-1.8.6/contrib/flatpak/shared-modules/smpeg/smpeg-no-gtk.patch
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/smpeg/smpeg-no-gtk.patch	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/smpeg/smpeg-no-gtk.patch	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,37 @@
++From 62cda978596a323cd7042722f906df906007e5b5 Mon Sep 17 00:00:00 2001
++From: Cosimo Cecchi <cosimoc@gnome.org>
++Date: Sat, 15 Apr 2017 13:24:39 -0700
++Subject: [PATCH] Comment out GTK detection
++
++---
++ configure.in | 14 +++++++-------
++ 1 file changed, 7 insertions(+), 7 deletions(-)
++
++diff --git a/configure.in b/configure.in
++index 20b1355..2cb4753 100644
++--- a/configure.in
+++++ b/configure.in
++@@ -208,13 +208,13 @@ AC_ARG_ENABLE(gtk_player,
++ [  --enable-gtk-player     build a GTk sample SMPEG player [default=yes]],
++               , enable_gtk_player=yes)
++ have_gtk=no
++-if test x$enable_gtk_player = xyes; then
++-    AM_PATH_GTK(1.2.1, have_gtk=yes)
++-    if test x$have_gtk = xyes; then
++-        CFLAGS="$CFLAGS $GTK_CFLAGS"
++-    fi
++-    AC_SUBST(GTK_LIBS)
++-fi
+++dnl if test x$enable_gtk_player = xyes; then
+++dnl     AM_PATH_GTK(1.2.1, have_gtk=yes)
+++dnl     if test x$have_gtk = xyes; then
+++dnl         CFLAGS="$CFLAGS $GTK_CFLAGS"
+++dnl     fi
+++dnl     AC_SUBST(GTK_LIBS)
+++dnl fi
++ AM_CONDITIONAL(HAVE_GTK, test x$have_gtk = xyes)
++ 
++ dnl See if we can build the Mesa player
++-- 
++2.12.2
++
+diff -urN fwupd-1.8.6-0/contrib/flatpak/shared-modules/udev/udev-175.json fwupd-1.8.6/contrib/flatpak/shared-modules/udev/udev-175.json
+--- fwupd-1.8.6-0/contrib/flatpak/shared-modules/udev/udev-175.json	1970-01-01 00:00:00.000000000 +0000
++++ fwupd-1.8.6/contrib/flatpak/shared-modules/udev/udev-175.json	2022-11-08 05:41:54.000000000 +0000
+@@ -0,0 +1,43 @@
++{
++  "name": "udev",
++  "rm-configure": true,
++  "config-opts": [
++    "--disable-hwdb",
++    "--disable-logging",
++    "--disable-introspection",
++    "--disable-keymap",
++    "--disable-mtd_probe"
++  ],
++  "cleanup": [
++    "/include",
++    "/etc",
++    "/libexec",
++    "/sbin",
++    "/lib/pkgconfig",
++    "/man",
++    "/share/aclocal",
++    "/share/doc",
++    "/share/gtk-doc",
++    "/share/man",
++    "/share/pkgconfig",
++    "*.la",
++    "*.a"
++  ],
++  "sources": [
++    {
++      "type": "archive",
++      "url": "http://kernel.org/pub/linux/utils/kernel/hotplug/udev-175.tar.bz2",
++      "sha256": "4c7937fe5a1521316ea571188745b9a00a9fdf314228cffc53a7ba9e5968b7ab"
++    },
++    {
++      "type": "script",
++      "dest-filename": "autogen.sh",
++      "commands": [
++        "autoreconf -vfi"
++      ]
++    }
++  ],
++  "post-install": [
++    "sed -i 's|${exec_prefix}|/app|g' /app/share/pkgconfig/udev.pc"
++  ]
++}
