@@ -43,12 +43,11 @@
 
 Name:      fwupd
 Version:   1.8.6
-Release:   1
+Release:   2
 License:   LGPLv2+
 Summary:   Make updating firmware on Linux automatic, safe and reliable
 URL:       https://github.com/fwupd/fwupd
 Source0:   https://github.com/fwupd/fwupd/archive/refs/tags/1.8.6.tar.gz
-Source1:   http://people.freedesktop.org/~hughsient/releases/libjcat-0.1.8.tar.xz
 Source2:   http://people.freedesktop.org/~hughsient/releases/fwupd-efi-1.1.tar.xz
 Source3:   centos-ca-secureboot.der
 Source4:   centossecureboot001.der
@@ -75,7 +74,7 @@ BuildRequires: libgusb-devel >= %{libgusb_version}
 BuildRequires: libcurl-devel >= %{libcurl_version}
 BuildRequires: polkit-devel >= 0.103
 BuildRequires: sqlite-devel
-BuildRequires: gpgme-devel
+BuildRequires: gpgme-devel libjcat-devel >= %{libjcat_version}
 BuildRequires: systemd >= %{systemd_version}
 BuildRequires: systemd-devel
 BuildRequires: libarchive-devel
@@ -154,14 +153,18 @@ Obsoletes: libdfu-devel < 1.0.0
 %description devel
 This package contains the development and installed test files for %{name}.
 
-%package_help
+%package        help
+Summary:        Documents for fwupd
+Buildarch:      noarch
+Requires:       man info
+Obsoletes:      dbxtool-help < 9
+Provides:       dbxtool-help
 
+%description help
+Man pages and other related documents for fwupd.
 
 %prep
 %autosetup -p1
-
-mkdir -p subprojects/libjcat
-tar xfs %{SOURCE1} -C subprojects/libjcat --strip-components=1
 
 mkdir -p subprojects/fwupd-efi
 tar xfs %{SOURCE2} -C subprojects/fwupd-efi --strip-components=1
@@ -313,7 +316,6 @@ done
 %{_bindir}/fwupdmgr
 %{_bindir}/fwupdtool
 %{_bindir}/fwupdagent
-%{_bindir}/jcat-tool
 %dir %{_sysconfdir}/fwupd
 %dir %{_sysconfdir}/fwupd/bios-settings.d
 %config%(noreplace)%{_sysconfdir}/fwupd/bios-settings.d/README.md
@@ -370,7 +372,6 @@ done
 /usr/lib/systemd/system-shutdown/fwupd.shutdown
 %dir %{_libdir}/fwupd-%{version}
 %{_libdir}/fwupd-%{version}/libfwupd*.so
-%{_libdir}/libjcat.so*
 %ghost %{_localstatedir}/lib/fwupd/gnupg
 
 %if 0%{?have_flashrom}
@@ -395,21 +396,15 @@ done
 
 %files devel
 %{_datadir}/gir-1.0/Fwupd-2.0.gir
-%{_datadir}/gir-1.0/Jcat-1.0.gir
 %{_datadir}/doc/fwupd/libfwupdplugin
 %{_datadir}/doc/fwupd/libfwupd
 %{_datadir}/doc/libfwupdplugin
 %{_datadir}/doc/libfwupd
 %{_datadir}/vala/vapi
 %{_includedir}/fwupd-1
-%{_includedir}/libjcat-1/jcat.h
-%{_includedir}/libjcat-1/libjcat/jcat*.h
 %{_libdir}/libfwupd*.so
 %{_libdir}/pkgconfig/fwupd.pc
-%{_libdir}/girepository-1.0/Jcat-1.0.typelib
-%{_libdir}/libjcat.so*
 %{_libdir}/pkgconfig/fwupd-efi.pc
-%{_libdir}/pkgconfig/jcat.pc
 %if 0%{?enable_tests}
 %{_datadir}/fwupd/host-emulate.d/*.json.gz
 %dir %{_datadir}/installed-tests/fwupd
@@ -418,16 +413,11 @@ done
 %{_datadir}/installed-tests/fwupd/*.test
 %{_datadir}/installed-tests/fwupd/*.cab
 %{_datadir}/installed-tests/fwupd/*.sh
-%{_datadir}/installed-tests/libjcat/libjcat.test
 %if 0%{?have_uefi}
 %{_datadir}/installed-tests/fwupd/efi
 %endif
 %{_datadir}/fwupd/device-tests/*.json
 %{_libexecdir}/installed-tests/fwupd/*
-%{_libexecdir}/installed-tests/libjcat/colorhug/firmware.bin*
-%{_libexecdir}/installed-tests/libjcat/jcat-self-test
-%{_libexecdir}/installed-tests/libjcat/pki/GPG-KEY-Linux-Vendor-Firmware-Service
-%{_libexecdir}/installed-tests/libjcat/pki/LVFS-CA.pem
 %{_datadir}/fwupd/__pycache__/*
 %dir %{_sysconfdir}/fwupd/remotes.d
 %config(noreplace)%{_sysconfdir}/fwupd/remotes.d/fwupd-tests.conf
@@ -438,6 +428,9 @@ done
 %{_datadir}/man/man1/*
 
 %changelog
+* Mon Feb 27 2023 liyanan <liyanan32@-partners.com> - 1.8.6-2
+- Fix fwupd libjcat dbxtool file conflicts
+
 * Tue Nov 1 2022 huyab<1229981468@qq.com> - 1.8.6-1
 - update version to 1.8.6-1
 
