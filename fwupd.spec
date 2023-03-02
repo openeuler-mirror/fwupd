@@ -43,7 +43,7 @@
 
 Name:      fwupd
 Version:   1.8.6
-Release:   2
+Release:   3
 License:   LGPLv2+
 Summary:   Make updating firmware on Linux automatic, safe and reliable
 URL:       https://github.com/fwupd/fwupd
@@ -271,6 +271,8 @@ mkdir -p %{buildroot}%{_datadir}/doc/fwupd
 cp -r libfwupd* %{buildroot}%{_datadir}/doc/
 cp -r *openEuler-linux*/libfwupd* %{buildroot}%{_datadir}/doc/fwupd/
 
+sed -i '/DynamicUser=yes/d' %{buildroot}/usr/lib/systemd/system/fwupd-refresh.service
+
 %find_lang %{name}
 
 %post
@@ -428,6 +430,9 @@ done
 %{_datadir}/man/man1/*
 
 %changelog
+* Thu Mar 02 2023 yaoxin <yaoxin30@h-partners.com> - 1.8.6-3
+- Fix fwupd-refresh.service start failure
+
 * Mon Feb 27 2023 liyanan <liyanan32@-partners.com> - 1.8.6-2
 - Fix fwupd libjcat dbxtool file conflicts
 
