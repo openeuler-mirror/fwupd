@@ -43,7 +43,7 @@
 
 Name:      fwupd
 Version:   1.8.6
-Release:   3
+Release:   4
 License:   LGPLv2+
 Summary:   Make updating firmware on Linux automatic, safe and reliable
 URL:       https://github.com/fwupd/fwupd
@@ -65,7 +65,7 @@ Patch0:    fwupd-efi.patch
 
 BuildRequires: libcbor libcbor-devel
 BuildRequires: efi-srpm-macros
-BuildRequires: gettext
+BuildRequires: gettext chrpath
 BuildRequires: glib2-devel >= %{glib2_version}
 BuildRequires: libxmlb-devel >= %{libxmlb_version}
 BuildRequires: libgcab1-devel
@@ -275,7 +275,27 @@ sed -i '/DynamicUser=yes/d' %{buildroot}/usr/lib/systemd/system/fwupd-refresh.se
 
 %find_lang %{name}
 
+for i in $(ls %{buildroot}/usr/libexec/installed-tests/fwupd/ |grep -v "fwupd.sh"); do  chrpath -d %{buildroot}/usr/libexec/installed-tests/fwupd/$i ;done
+
+chrpath -d %{buildroot}/usr/share/doc/fwupd/libfwupdplugin/fwupdplugin-self-test
+chrpath -d %{buildroot}/usr/share/doc/fwupd/libfwupdplugin/libfwupdplugin.so
+chrpath -d %{buildroot}/usr/share/doc/fwupd/libfwupd/fwupd-self-test
+chrpath -d %{buildroot}/usr/share/doc/fwupd/libfwupd/fwupd-context-test
+chrpath -d %{buildroot}/usr/share/doc/fwupd/libfwupd/fwupd-thread-test
+
+chrpath -d %{buildroot}/usr/libexec/fwupd/fwupd
+chrpath -d %{buildroot}/usr/libexec/fwupd/fwupdoffline
+
+for b in $(ls %{buildroot}/usr/bin/ ); do  chrpath -d %{buildroot}/usr/bin/$b ;done
+
+mkdir -p %{buildroot}/etc/ld.so.conf.d
+echo "%{_libdir}/%{name}-%{version}" > %{buildroot}/etc/ld.so.conf.d/%{name}-%{_arch}.conf
+echo "%{_libdir}/%{name}-%{version}" > %{buildroot}/etc/ld.so.conf.d/%{name}-devel-%{_arch}.conf
+echo "/usr/share/doc/fwupd/libfwupdplugin/" >> %{buildroot}/etc/ld.so.conf.d/%{name}-devel-%{_arch}.conf
+echo "/usr/share/doc/fwupd/libfwupd/" >> %{buildroot}/etc/ld.so.conf.d/%{name}-devel-%{_arch}.conf
+
 %post
+/sbin/ldconfig
 %systemd_post fwupd.service
 
 # change vendor-installed remotes to use the default keyring type
@@ -289,7 +309,14 @@ done
 %systemd_preun fwupd.service
 
 %postun
+/sbin/ldconfig
 %systemd_postun_with_restart fwupd.service
+
+%post devel
+/sbin/ldconfig
+
+%postun devel
+/sbin/ldconfig
 
 %files -f %{name}.lang
 %doc README.md AUTHORS
@@ -394,6 +421,7 @@ done
 %{_datadir}/dbxtool/DBXUpdate-20200729-aa64.cab
 %{_datadir}/dbxtool/DBXUpdate-20200729-ia32.cab
 %{_datadir}/dbxtool/DBXUpdate-20200729-x64.cab
+%config(noreplace) /etc/ld.so.conf.d/%{name}-%{_arch}.conf
 
 
 %files devel
@@ -424,12 +452,16 @@ done
 %dir %{_sysconfdir}/fwupd/remotes.d
 %config(noreplace)%{_sysconfdir}/fwupd/remotes.d/fwupd-tests.conf
 %endif
+%config(noreplace) /etc/ld.so.conf.d/%{name}-devel-%{_arch}.conf
 
 
 %files help
 %{_datadir}/man/man1/*
 
 %changelog
+* Fri Mar 3 2023 liyanan  <liyanan32@h-partners.com> - 1.8.6-4
+- Remove rpath
+
 * Thu Mar 02 2023 yaoxin <yaoxin30@h-partners.com> - 1.8.6-3
 - Fix fwupd-refresh.service start failure
 
