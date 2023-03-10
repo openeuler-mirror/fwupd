@@ -43,7 +43,7 @@
 
 Name:      fwupd
 Version:   1.8.6
-Release:   4
+Release:   5
 License:   LGPLv2+
 Summary:   Make updating firmware on Linux automatic, safe and reliable
 URL:       https://github.com/fwupd/fwupd
@@ -129,7 +129,6 @@ Provides: dbxtool
 
 # optional, but a really good idea
 Recommends: udisks2
-Recommends: bluez
 Recommends: jq
 
 %if 0%{?have_flashrom}
@@ -459,6 +458,9 @@ done
 %{_datadir}/man/man1/*
 
 %changelog
+* Fri Mar 10 2023 zhouwenpei  <zhouwenpei1@h-partners.com> - 1.8.6-5
+- remove bluez require
+
 * Fri Mar 3 2023 liyanan  <liyanan32@h-partners.com> - 1.8.6-4
 - Remove rpath
 
