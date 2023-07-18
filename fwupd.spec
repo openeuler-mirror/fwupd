@@ -12,17 +12,17 @@
 %global enable_dummy 1
 
 # fwupd.efi is only available on these arches
-%ifarch x86_64 aarch64
+%ifarch x86_64 aarch64 riscv64
 %global have_uefi 1
 %endif
 
 # gpio.h is only available on these arches
-%ifarch x86_64 aarch64
+%ifarch x86_64 aarch64 riscv64
 %global have_gpio 1
 %endif
 
 # flashrom is only available on these arches
-%ifarch i686 x86_64 armv7hl aarch64 ppc64le
+%ifarch i686 x86_64 armv7hl aarch64 ppc64le riscv64
 %global have_flashrom 0
 %endif
 
@@ -43,7 +43,7 @@
 
 Name:      fwupd
 Version:   1.8.6
-Release:   5
+Release:   6
 License:   LGPLv2+
 Summary:   Make updating firmware on Linux automatic, safe and reliable
 URL:       https://github.com/fwupd/fwupd
@@ -59,9 +59,13 @@ Source9:   http://people.redhat.com/rhughes/dbx/DBXUpdate-20160809-x64.cab
 Source10:  http://people.redhat.com/rhughes/dbx/DBXUpdate-20200729-aa64.cab
 Source11:  http://people.redhat.com/rhughes/dbx/DBXUpdate-20200729-ia32.cab
 Source12:  http://people.redhat.com/rhughes/dbx/DBXUpdate-20200729-x64.cab
+Source13:  https://sourceforge.net/p/gnu-efi/code/ci/3.0.14/tree/gnuefi/crt0-efi-riscv64.S?format=raw#/crt0-efi-riscv64.S
+Source14:  https://sourceforge.net/p/gnu-efi/code/ci/3.0.14/tree/gnuefi/elf_riscv64_efi.lds?format=raw#/elf_riscv64_efi.lds
 
 Patch0:    fwupd-efi.patch
-
+%ifarch riscv64
+Patch1:    https://raw.githubusercontent.com/GNOME/gnome-build-meta/37bc8931517261e359e02b2b14bffab0501e79d9/files/fwupd/riscv64.patch
+%endif
 
 BuildRequires: libcbor libcbor-devel
 BuildRequires: efi-srpm-macros
@@ -163,10 +167,17 @@ Provides:       dbxtool-help
 Man pages and other related documents for fwupd.
 
 %prep
-%autosetup -p1
+%setup -q -n %{name}-%{version}
+%patch0 -p1
 
 mkdir -p subprojects/fwupd-efi
 tar xfs %{SOURCE2} -C subprojects/fwupd-efi --strip-components=1
+
+%ifarch riscv64
+%patch1 -p1
+cp %{SOURCE13} subprojects/fwupd-efi/efi/crt0
+cp %{SOURCE14} subprojects/fwupd-efi/efi/lds
+%endif
 
 sed -ri '1s=^#!/usr/bin/(env )?python3=#!%{__python3}=' \
         contrib/ci/*.py \
@@ -330,8 +341,13 @@ done
 %endif
 %dir %{_libexecdir}/fwupd
 %{_libexecdir}/fwupd/fwupd
+# depending on compiler behavior
+# currently skipped from building if compiled by llvm
+%if "%toolchain" == "llvm"
+%else
 %ifarch i686 x86_64
 %{_libexecdir}/fwupd/fwupd-detect-cet
+%endif
 %endif
 %{_libexecdir}/fwupd/fwupdoffline
 %if 0%{?have_uefi}
@@ -458,6 +474,10 @@ done
 %{_datadir}/man/man1/*
 
 %changelog
+* Mon Jul 10 2023 misaka00251 <liuxin@iscas.ac.cn> - 1.8.6-6
+- Fix build on riscv64
+- from @jchzhou: skip packaging fwupd-detect-cet if compiled with llvm
+
 * Fri Mar 10 2023 zhouwenpei  <zhouwenpei1@h-partners.com> - 1.8.6-5
 - remove bluez require
 
