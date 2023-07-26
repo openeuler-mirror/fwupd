@@ -1,0 +1,49 @@
+diff --git a/subprojects/fwupd-efi/efi/generate_binary.py b/subprojects/fwupd-efi/efi/generate_binary.py
+index a8a4437..9af5853 100755
+--- a/subprojects/fwupd-efi/efi/generate_binary.py
++++ b/subprojects/fwupd-efib/efi/generate_binary.py
+@@ -36,7 +36,7 @@ def _run_objcopy(args):
+ 
+     # aarch64 and arm32 don't have an EFI capable objcopy
+     # Use 'binary' instead, and add required symbols manually
+-    if args.arch in ["aarch64", "arm"]:
++    if args.arch in ["aarch64", "arm", "riscv64"]:
+         argv.extend(["-O", "binary"])
+     elif args.os == "freebsd":
+         # `--target` option is missing and --input-target doesn't recognize
+diff --git a/subprojects/fwupd-efi/efi/meson.build b/subprojects/fwupd-efi/efi/meson.build
+index 68ea4aa..26ba42c 100644
+--- a/subprojects/fwupd-efi/efi/meson.build
++++ b/subprojects/fwupd-efi/efi/meson.build
+@@ -18,7 +18,7 @@ endif
+ 
+ efi_libdir = get_option('efi-libdir')
+ if efi_libdir == ''
+-  cmd = 'cd /usr/lib/$(@0@ -print-multi-os-directory) && pwd'.format(efi_cc)
++  cmd = 'cd /usr/lib64/$(@0@ -print-multi-os-directory) && pwd'.format(efi_cc)
+   ret = run_command('sh', '-c', cmd)
+   if ret.returncode() == 0
+     efi_libdir = ret.stdout().strip()
+@@ -79,7 +79,7 @@ if get_option('efi_sbat_distro_id') != ''
+ endif
+ 
+ # is the system crt0 for arm and aarch64 new enough to know about SBAT?
+-if host_cpu == 'aarch64' or host_cpu == 'arm'
++if host_cpu == 'aarch64' or host_cpu == 'arm' or host_cpu == 'riscv64'
+   if get_option('efi_sbat_distro_id') != ''
+     arch_crt_source = 'crt0-efi-@0@.S'.format(gnu_efi_path_arch)
+     cmd = run_command('grep', '-q', 'sbat', join_paths(efi_crtdir, arch_crt_source))
+diff --git a/subprojects/fwupd-efi/meson.build b/subprojects/fwupd-efi/meson.build
+index 1753411..8d23a50 100644
+--- a/subprojects/fwupd-efi/meson.build
++++ b/subprojects/fwupd-efi/meson.build
+@@ -27,6 +27,9 @@ elif host_cpu == 'arm'
+ elif host_cpu == 'aarch64'
+         EFI_MACHINE_TYPE_NAME = 'aa64'
+         gnu_efi_arch = 'aarch64'
++elif host_cpu == 'riscv64'
++        EFI_MACHINE_TYPE_NAME = 'riscv64'
++        gnu_efi_arch = 'riscv64'
+ else
+         error('Unknown host_cpu ' + host_cpu)
+ endif
