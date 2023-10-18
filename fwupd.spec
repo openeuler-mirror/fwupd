@@ -42,12 +42,12 @@
 
 
 Name:      fwupd
-Version:   1.8.6
-Release:   6
+Version:   1.8.17
+Release:   1
 License:   LGPLv2+
 Summary:   Make updating firmware on Linux automatic, safe and reliable
 URL:       https://github.com/fwupd/fwupd
-Source0:   https://github.com/fwupd/fwupd/archive/refs/tags/1.8.6.tar.gz
+Source0:   http://people.freedesktop.org/~hughsient/releases/%{name}-%{version}.tar.xz
 Source2:   http://people.freedesktop.org/~hughsient/releases/fwupd-efi-1.1.tar.xz
 Source3:   centos-ca-secureboot.der
 Source4:   centossecureboot001.der
@@ -329,7 +329,7 @@ done
 /sbin/ldconfig
 
 %files -f %{name}.lang
-%doc README.md AUTHORS
+%doc README.md
 %license COPYING
 %config(noreplace)%{_sysconfdir}/fwupd/daemon.conf
 %if 0%{?have_uefi}
@@ -351,15 +351,10 @@ done
 %endif
 %{_libexecdir}/fwupd/fwupdoffline
 %if 0%{?have_uefi}
-%{_bindir}/fwupdate
-%endif
-%{_bindir}/dfu-tool
-%if 0%{?have_uefi}
 %{_bindir}/dbxtool
 %endif
 %{_bindir}/fwupdmgr
 %{_bindir}/fwupdtool
-%{_bindir}/fwupdagent
 %dir %{_sysconfdir}/fwupd
 %dir %{_sysconfdir}/fwupd/bios-settings.d
 %config%(noreplace)%{_sysconfdir}/fwupd/bios-settings.d/README.md
@@ -380,7 +375,6 @@ done
 %{_datadir}/dbus-1/system.d/org.freedesktop.fwupd.conf
 %{_datadir}/bash-completion/completions/fwupdmgr
 %{_datadir}/bash-completion/completions/fwupdtool
-%{_datadir}/bash-completion/completions/fwupdagent
 %{_datadir}/fish/vendor_completions.d/fwupdmgr.fish
 %{_datadir}/fwupd/metainfo/org.freedesktop.fwupd*.metainfo.xml
 %if 0%{?have_dell}
@@ -458,9 +452,12 @@ done
 %{_datadir}/installed-tests/fwupd/*.test
 %{_datadir}/installed-tests/fwupd/*.cab
 %{_datadir}/installed-tests/fwupd/*.sh
+%{_datadir}/installed-tests/fwupd/*.zip
 %if 0%{?have_uefi}
 %{_datadir}/installed-tests/fwupd/efi
 %endif
+%{_datadir}/installed-tests/fwupd/chassis_type
+%{_datadir}/installed-tests/fwupd/sys_vendor
 %{_datadir}/fwupd/device-tests/*.json
 %{_libexecdir}/installed-tests/fwupd/*
 %{_datadir}/fwupd/__pycache__/*
@@ -474,6 +471,9 @@ done
 %{_datadir}/man/man1/*
 
 %changelog
+* Wed Oct 18 2023 yaoxin <yao_xin001@hoperun.com> - 1.8.17-1
+- Upgrade to 1.8.17
+
 * Mon Jul 10 2023 misaka00251 <liuxin@iscas.ac.cn> - 1.8.6-6
 - Fix build on riscv64
 - from @jchzhou: skip packaging fwupd-detect-cet if compiled with llvm
